@@ -27,14 +27,12 @@ export default function Search() {
     fetchSkills();
   }, []);
 
-  // ✅ FIXED: send correct payload
   const handleSendRequest = async (skillId) => {
     try {
       setSendingId(skillId);
-      await sendTradeRequest({ skillId }); // ✅ IMPORTANT
+      await sendTradeRequest({ skillId });
       alert("Trade request sent successfully!");
     } catch (err) {
-      console.error(err);
       alert(
         err?.response?.data?.message ||
           "Failed to send trade request"
@@ -49,79 +47,99 @@ export default function Search() {
     : skills;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-6">
-      <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
-        Skill Marketplace
-      </h1>
+    <div className="min-h-screen bg-gray-50 px-6 py-10">
+      <div className="max-w-7xl mx-auto">
 
-      {/* CATEGORY FILTER */}
-      <div className="flex justify-center mb-8">
-        <select
-          className="border px-4 py-2 rounded shadow-sm"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        >
-          <option value="">All Categories</option>
-          <option value="Programming">Programming</option>
-          <option value="Design">Design</option>
-          <option value="Marketing">Marketing</option>
-          <option value="Writing">Writing</option>
-          <option value="Business">Business</option>
-        </select>
-      </div>
-
-      {loading ? (
-        <p className="text-center text-gray-500">Loading...</p>
-      ) : filteredSkills.length === 0 ? (
-        <p className="text-center text-gray-500">No skills found.</p>
-      ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredSkills.map((skill) => (
-            <div
-              key={skill._id}
-              className="bg-white rounded-2xl shadow p-5 border hover:shadow-md transition"
-            >
-              {/* TITLE */}
-              <h2 className="text-xl font-semibold text-gray-800 mb-1">
-                {skill.title}
-              </h2>
-
-              {/* CATEGORY */}
-              <p className="text-sm text-gray-600 mb-2">
-                Category:{" "}
-                <span className="font-semibold text-blue-600">
-                  {skill.category || "Not Specified"}
-                </span>
-              </p>
-
-              {/* DESCRIPTION */}
-              <p className="text-gray-600 mb-3">
-                {skill.description || "No description provided."}
-              </p>
-
-              {/* USER */}
-              <p className="text-xs text-gray-400">
-                Posted by: {skill.user?.email || "Unknown"}
-              </p>
-
-              {/* ACTION */}
-              <button
-                onClick={() => handleSendRequest(skill._id)}
-                disabled={sendingId === skill._id}
-                className={`mt-4 px-4 py-2 rounded text-white transition ${
-                  sendingId === skill._id
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:bg-green-700"
-                }`}
-              >
-                {sendingId === skill._id
-                  ? "Sending..."
-                  : "Send Trade Request"}
-              </button>
-            </div>
-          ))}
+        {/* ================= HEADER ================= */}
+        <div className="text-center mb-10">
+          <h1 className="text-3xl font-semibold text-gray-900">
+            Skill Marketplace
+          </h1>
+          <p className="text-gray-500 mt-2">
+            Browse skills shared by others and start a trade
+          </p>
         </div>
-      )}
+
+        {/* ================= FILTER ================= */}
+        <div className="flex justify-center mb-10">
+          <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4 flex items-center gap-4">
+            <label className="text-sm font-medium text-gray-700">
+              Filter by category
+            </label>
+            <select
+              className="border border-gray-300 rounded-lg px-4 py-2
+                         focus:ring-2 focus:ring-sky-400 outline-none"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <option value="">All Categories</option>
+              <option value="Programming">Programming</option>
+              <option value="Design">Design</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Writing">Writing</option>
+              <option value="Business">Business</option>
+            </select>
+          </div>
+        </div>
+
+        {/* ================= CONTENT ================= */}
+        {loading ? (
+          <p className="text-center text-gray-500">
+            Loading marketplace…
+          </p>
+        ) : filteredSkills.length === 0 ? (
+          <p className="text-center text-gray-500">
+            No skills found for this category.
+          </p>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredSkills.map((skill) => (
+              <div
+                key={skill._id}
+                className="bg-white rounded-2xl border border-gray-200
+                           shadow-sm hover:shadow-md transition p-6 flex flex-col"
+              >
+                {/* TITLE */}
+                <h2 className="text-lg font-semibold text-gray-900">
+                  {skill.title}
+                </h2>
+
+                {/* CATEGORY BADGE */}
+                <span className="inline-block mt-2 w-fit text-xs font-medium
+                                 px-3 py-1 rounded-full
+                                 bg-sky-100 text-sky-700">
+                  {skill.category || "Uncategorized"}
+                </span>
+
+                {/* DESCRIPTION */}
+                <p className="text-sm text-gray-600 mt-3 flex-grow">
+                  {skill.description || "No description provided."}
+                </p>
+
+                {/* USER */}
+                <p className="text-xs text-gray-400 mt-4">
+                  Posted by {skill.user?.email || "Unknown"}
+                </p>
+
+                {/* ACTION */}
+                <button
+                  onClick={() => handleSendRequest(skill._id)}
+                  disabled={sendingId === skill._id}
+                  className={`mt-4 py-2 rounded-lg font-medium transition ${
+                    sendingId === skill._id
+                      ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                      : "bg-green-500 hover:bg-green-600 text-white"
+                  }`}
+                >
+                  {sendingId === skill._id
+                    ? "Sending…"
+                    : "Send Trade Request"}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -17,53 +17,38 @@ function formatTime(time) {
 
 export default function ChatWindow() {
   const { tradeId } = useParams();
-
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const [currentUserId, setCurrentUserId] = useState(null);
-
   const bottomRef = useRef(null);
 
-  /* ================================
-     GET CURRENT USER ID (JWT)
-  ================================= */
+  /* CURRENT USER */
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
-
     const payload = JSON.parse(atob(token.split(".")[1]));
     setCurrentUserId(payload.id);
   }, []);
 
-  /* ================================
-     LOAD CHAT HISTORY
-  ================================= */
+  /* LOAD CHAT */
   useEffect(() => {
     if (!tradeId) return;
-
     API.get(`/chat/${tradeId}`)
       .then((res) => setMessages(res.data || []))
-      .catch((err) =>
-        console.error("❌ Chat history load error:", err)
-      );
+      .catch(console.error);
   }, [tradeId]);
 
-  /* ================================
-     SOCKET.IO SETUP
-  ================================= */
+  /* SOCKET */
   useEffect(() => {
     if (!tradeId || !currentUserId) return;
 
     socket.connect();
-
     socket.emit("join_trade", tradeId);
 
     socket.on("receive_message", (msg) => {
-      setMessages((prev) => {
-        // prevent duplicates
-        if (prev.some((m) => m._id === msg._id)) return prev;
-        return [...prev, msg];
-      });
+      setMessages((prev) =>
+        prev.some((m) => m._id === msg._id) ? prev : [...prev, msg]
+      );
     });
 
     return () => {
@@ -72,65 +57,51 @@ export default function ChatWindow() {
     };
   }, [tradeId, currentUserId]);
 
-  /* ================================
-     AUTO SCROLL
-  ================================= */
+  /* AUTO SCROLL */
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  /* ================================
-     SEND MESSAGE
-  ================================= */
   const sendMessage = async () => {
     if (!text.trim()) return;
-
     try {
-      const res = await API.post("/chat/send", {
-        tradeId,
-        text,
-      });
-
-      // push immediately (NO waiting)
-      //setMessages((prev) => [...prev, res.data]);
+      await API.post("/chat/send", { tradeId, text });
       setText("");
-    } catch (err) {
-      console.error("❌ Send message failed:", err);
+    } catch {
       alert("Failed to send message");
     }
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-gray-50 max-w-3xl mx-auto">
+
       {/* HEADER */}
-      <header className="p-4 bg-white border-b">
-        <h2 className="text-lg font-semibold">Trade Chat</h2>
-        <p className="text-xs text-gray-500">Trade ID: {tradeId}</p>
+      <header className="bg-white border-b px-6 py-4 shadow-sm">
+        <h2 className="font-semibold text-gray-900">Trade Chat</h2>
+        <p className="text-xs text-gray-500">Trade #{tradeId}</p>
       </header>
 
-      {/* CHAT BODY */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      {/* CHAT */}
+      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 no-scrollbar">
         {messages.map((m) => {
           const senderId =
             typeof m.sender === "object" ? m.sender._id : m.sender;
-
           const isMine = senderId === currentUserId;
 
           return (
             <div
               key={m._id}
-              className={`flex ${
-                isMine ? "justify-end" : "justify-start"
-              }`}
+              className={`flex ${isMine ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`px-4 py-2 rounded-xl max-w-xs ${
-                  isMine
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-900"
-                }`}
+                className={`max-w-xs px-4 py-2 rounded-2xl shadow text-sm
+                  ${
+                    isMine
+                      ? "bg-sky-500 text-white rounded-br-md"
+                      : "bg-white text-gray-800 border rounded-bl-md"
+                  }`}
               >
-                <p className="text-sm">{m.text}</p>
+                <p>{m.text}</p>
                 <p className="text-[10px] mt-1 text-right opacity-70">
                   {formatTime(m.createdAt)}
                 </p>
@@ -141,18 +112,18 @@ export default function ChatWindow() {
         <div ref={bottomRef} />
       </div>
 
-      {/* FOOTER */}
-      <footer className="p-3 bg-white border-t flex gap-2">
+      {/* INPUT */}
+      <footer className="bg-white border-t px-4 py-3 flex gap-2">
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          className="flex-1 border rounded-full px-4 py-2"
-          placeholder="Type a message..."
+          className="flex-1 border rounded-full px-4 py-2 focus:ring-2 focus:ring-sky-400"
+          placeholder="Type a message…"
         />
         <button
           onClick={sendMessage}
-          className="bg-blue-600 text-white px-5 py-2 rounded-full"
+          className="bg-sky-500 hover:bg-sky-600 text-white px-5 py-2 rounded-full font-medium"
         >
           Send
         </button>

@@ -151,3 +151,12 @@ body {
          text-white font-medium px-4 py-2
          rounded-lg transition w-full;
 }
+
+.no-scrollbar {
+  scrollbar-width: none;        
+  -ms-overflow-style: none;     
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;                
+}

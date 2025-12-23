@@ -59,69 +59,109 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-6">
-      <div className="max-w-3xl mx-auto">
-        <h2 className="text-2xl font-bold mb-4">My Skills</h2>
+    <div className="min-h-screen bg-gray-50 px-6 py-8">
+      <div className="max-w-6xl mx-auto">
 
-        <form onSubmit={submit} className="mb-6 bg-white p-4 rounded shadow">
-          <h3 className="font-semibold mb-2">
-            {editing ? "Edit Skill" : "Add Skill"}
+        {/* PAGE HEADER */}
+        <div className="mb-8">
+          <h2 className="text-3xl font-semibold text-gray-900">
+            My Skills
+          </h2>
+          <p className="text-gray-500 mt-1">
+            Manage the skills you want to trade with others
+          </p>
+        </div>
+
+        {/* ADD / EDIT SKILL FORM */}
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-10">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            {editing ? "Edit Skill" : "Add New Skill"}
           </h3>
 
-          <input
-            className="w-full border px-3 py-2 rounded mb-2"
-            placeholder="Skill title"
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-            required
-          />
+          <form onSubmit={submit} className="space-y-4">
+            <input
+              className="w-full border border-gray-300 rounded-lg px-4 py-2
+                         focus:ring-2 focus:ring-sky-400 outline-none"
+              placeholder="Skill title"
+              value={form.title}
+              onChange={(e) =>
+                setForm({ ...form, title: e.target.value })
+              }
+              required
+            />
 
-          <select
-            className="w-full border px-3 py-2 rounded mb-2"
-            value={form.category}
-            onChange={(e) => setForm({ ...form, category: e.target.value })}
-            required
-          >
-            <option value="">Select Category</option>
-            <option value="Programming">Programming</option>
-            <option value="Design">Design</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Writing">Writing</option>
-          </select>
+            <select
+              className="w-full border border-gray-300 rounded-lg px-4 py-2
+                         focus:ring-2 focus:ring-sky-400 outline-none"
+              value={form.category}
+              onChange={(e) =>
+                setForm({ ...form, category: e.target.value })
+              }
+              required
+            >
+              <option value="">Select Category</option>
+              <option value="Programming">Programming</option>
+              <option value="Design">Design</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Writing">Writing</option>
+            </select>
 
-          <textarea
-            className="w-full border px-3 py-2 rounded mb-2"
-            placeholder="Description"
-            value={form.description}
-            onChange={(e) =>
-              setForm({ ...form, description: e.target.value })
-            }
-          />
+            <textarea
+              className="w-full border border-gray-300 rounded-lg px-4 py-2
+                         focus:ring-2 focus:ring-sky-400 outline-none resize-none"
+              placeholder="Short description about your skill"
+              rows={3}
+              value={form.description}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  description: e.target.value,
+                })
+              }
+            />
 
-          <div className="flex gap-2">
-            <button className="px-4 py-2 bg-blue-600 text-white rounded">
-              {editing ? "Save Changes" : "Add Skill"}
-            </button>
-
-            {editing && (
+            <div className="flex gap-3 pt-2">
               <button
-                type="button"
-                onClick={() => {
-                  setEditing(null);
-                  setForm({ title: "", description: "", category: "" });
-                }}
-                className="px-4 py-2 bg-gray-300 rounded"
+                className="bg-sky-500 hover:bg-sky-600
+                           text-white px-5 py-2 rounded-lg
+                           font-medium transition"
               >
-                Cancel
+                {editing ? "Save Changes" : "Add Skill"}
               </button>
-            )}
-          </div>
-        </form>
 
+              {editing && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditing(null);
+                    setForm({
+                      title: "",
+                      description: "",
+                      category: "",
+                    });
+                  }}
+                  className="bg-gray-100 hover:bg-gray-200
+                             text-gray-700 px-5 py-2 rounded-lg
+                             font-medium transition"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+
+        {/* SKILLS GRID */}
         {loading ? (
-          <p>Loading...</p>
+          <p className="text-gray-500 text-center">
+            Loading skills…
+          </p>
+        ) : skills.length === 0 ? (
+          <p className="text-gray-500 text-center">
+            You haven’t added any skills yet.
+          </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {skills.map((s) => (
               <SkillCard
                 key={s._id}
