@@ -61,7 +61,7 @@ export default function MyProfile() {
         {skills.length === 0 ? (
           <p className="text-gray-500">No skills added yet.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {skills.map((skill) => (
               <div
                 key={skill._id}

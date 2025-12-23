@@ -19,14 +19,15 @@ export default function SkillCard({ skill, onDeleted, onEdit }) {
       {/* Top Accent */}
       <div className="h-1 bg-gradient-to-r from-sky-400 to-blue-600" />
 
-      <div className="p-5 flex flex-col h-full">
+      <div className="p-6 flex flex-col h-full">
+        
         {/* Title */}
         <h3 className="text-lg font-semibold text-gray-900 tracking-tight">
           {skill.title}
         </h3>
 
         {/* Category Badge */}
-        <span className="mt-2 inline-block w-fit text-xs font-medium bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+        <span className="mt-2 inline-flex w-fit items-center px-3 py-1 rounded-full text-xs font-medium bg-sky-100 text-sky-700">
           {skill.category}
         </span>
 
@@ -39,18 +40,23 @@ export default function SkillCard({ skill, onDeleted, onEdit }) {
         <div className="mt-5 flex justify-end gap-2">
           <button
             onClick={() => onEdit(skill)}
-            className="px-4 py-1.5 text-sm font-medium rounded-lg bg-yellow-400 hover:bg-yellow-500 text-gray-900 transition"
+            className="px-4 py-1.5 text-sm font-medium rounded-lg
+                       bg-yellow-400 hover:bg-yellow-500
+                       text-gray-900 transition-colors"
           >
             Edit
           </button>
 
           <button
             onClick={handleDelete}
-            className="px-4 py-1.5 text-sm font-medium rounded-lg bg-red-500 hover:bg-red-600 text-white transition"
+            className="px-4 py-1.5 text-sm font-medium rounded-lg
+                       bg-red-500 hover:bg-red-600
+                       text-white transition-colors"
           >
             Delete
           </button>
         </div>
+
       </div>
     </div>
   );
