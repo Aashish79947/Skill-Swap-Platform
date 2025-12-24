@@ -10,6 +10,12 @@ export default function Search() {
   const [category, setCategory] = useState("");
   const [sendingId, setSendingId] = useState(null);
 
+  // ✅ NEW: search state
+  const [query, setQuery] = useState("");
+
+  // ✅ track which skills already have request sent
+  const [requestedIds, setRequestedIds] = useState(new Set());
+
   const fetchSkills = async () => {
     setLoading(true);
     try {
@@ -31,7 +37,8 @@ export default function Search() {
     try {
       setSendingId(skillId);
       await sendTradeRequest({ skillId });
-      alert("Trade request sent successfully!");
+
+      setRequestedIds((prev) => new Set(prev).add(skillId));
     } catch (err) {
       alert(
         err?.response?.data?.message ||
@@ -42,9 +49,15 @@ export default function Search() {
     }
   };
 
-  const filteredSkills = category
-    ? skills.filter((s) => s.category === category)
-    : skills;
+  // ✅ FILTER: category + search
+  const filteredSkills = skills.filter((s) => {
+    const matchCategory = category ? s.category === category : true;
+    const matchQuery = s.title
+      ?.toLowerCase()
+      .includes(query.toLowerCase());
+
+    return matchCategory && matchQuery;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-10">
@@ -60,26 +73,32 @@ export default function Search() {
           </p>
         </div>
 
-        {/* ================= FILTER ================= */}
-        <div className="flex justify-center mb-10">
-          <div className="bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-4 flex items-center gap-4">
-            <label className="text-sm font-medium text-gray-700">
-              Filter by category
-            </label>
-            <select
-              className="border border-gray-300 rounded-lg px-4 py-2
-                         focus:ring-2 focus:ring-sky-400 outline-none"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              <option value="">All Categories</option>
-              <option value="Programming">Programming</option>
-              <option value="Design">Design</option>
-              <option value="Marketing">Marketing</option>
-              <option value="Writing">Writing</option>
-              <option value="Business">Business</option>
-            </select>
-          </div>
+        {/* ================= SEARCH + FILTER ================= */}
+        <div className="flex flex-col md:flex-row justify-center gap-4 mb-10">
+          {/* SEARCH */}
+          <input
+            type="text"
+            placeholder="Search skills (e.g. React, Design, Marketing...)"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full md:w-96 px-4 py-2 rounded-xl border border-gray-300
+                       focus:ring-2 focus:ring-sky-400 outline-none shadow-sm"
+          />
+
+          {/* CATEGORY FILTER */}
+          <select
+            className="px-4 py-2 rounded-xl border border-gray-300
+                       focus:ring-2 focus:ring-sky-400 outline-none shadow-sm"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value="">All Categories</option>
+            <option value="Programming">Programming</option>
+            <option value="Design">Design</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Writing">Writing</option>
+            <option value="Business">Business</option>
+          </select>
         </div>
 
         {/* ================= CONTENT ================= */}
@@ -89,7 +108,7 @@ export default function Search() {
           </p>
         ) : filteredSkills.length === 0 ? (
           <p className="text-center text-gray-500">
-            No skills found for this category.
+            No skills match your search.
           </p>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -124,14 +143,21 @@ export default function Search() {
                 {/* ACTION */}
                 <button
                   onClick={() => handleSendRequest(skill._id)}
-                  disabled={sendingId === skill._id}
+                  disabled={
+                    sendingId === skill._id ||
+                    requestedIds.has(skill._id)
+                  }
                   className={`mt-4 py-2 rounded-lg font-medium transition ${
-                    sendingId === skill._id
+                    requestedIds.has(skill._id)
+                      ? "bg-gray-200 text-gray-600 cursor-not-allowed"
+                      : sendingId === skill._id
                       ? "bg-gray-300 text-gray-600 cursor-not-allowed"
                       : "bg-green-500 hover:bg-green-600 text-white"
                   }`}
                 >
-                  {sendingId === skill._id
+                  {requestedIds.has(skill._id)
+                    ? "Request Sent"
+                    : sendingId === skill._id
                     ? "Sending…"
                     : "Send Trade Request"}
                 </button>
