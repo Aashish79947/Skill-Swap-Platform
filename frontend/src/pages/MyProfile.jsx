@@ -72,46 +72,71 @@ export default function MyProfile() {
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-10">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-2xl mx-auto">
 
         {/* ================= PROFILE CARD ================= */}
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 text-center">
+        <div className="bg-white rounded-3xl border border-gray-200 shadow-xl overflow-hidden mb-10">
 
-          {/* Avatar */}
-          <div className="mx-auto w-20 h-20 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center text-3xl font-semibold">
-            {initial}
+          {/* Gradient Banner */}
+          <div className="h-24 bg-gradient-to-r from-sky-500 via-blue-600 to-cyan-500 relative">
+            {/* Optional Pattern/Overlay */}
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
           </div>
 
-          {/* Email */}
-          <p className="mt-4 text-lg font-medium text-gray-900">
-            {user.email}
-          </p>
+          <div className="px-8 pb-8 text-center relative">
 
-          <p className="text-sm text-gray-500 mt-1">
-            SkillSwap Member
-          </p>
-
-          {/* WANTED SKILLS UPDATE */}
-          <div className="mt-6 max-w-sm mx-auto text-left">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              What do you want to learn? (comma separated)
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="e.g. Python, Design, Singing"
-                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none"
-                value={wanted}
-                onChange={(e) => setWanted(e.target.value)}
-              />
-              <button
-                onClick={handleUpdate}
-                disabled={updating}
-                className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition disabled:opacity-50"
-              >
-                {updating ? "Saving..." : "Save"}
-              </button>
+            {/* Avatar (Overlapping) */}
+            <div className="relative -mt-16 mb-4">
+              <div className="mx-auto w-32 h-32 rounded-full border-4 border-white shadow-md bg-white text-sky-600 flex items-center justify-center text-5xl font-bold">
+                {initial}
+              </div>
             </div>
+
+            {/* User Info */}
+            <h1 className="text-3xl font-bold text-gray-900">
+              {user.name || user.email.split('@')[0]}
+            </h1>
+            <p className="text-gray-500 font-medium">{user.email}</p>
+
+            {/* Stats Row */}
+            <div className="flex justify-center gap-8 mt-6 mb-8 border-t border-b border-gray-100 py-4">
+              <div className="text-center">
+                <span className="block text-2xl font-bold text-gray-900">{skills.length}</span>
+                <span className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Skills</span>
+              </div>
+              <div className="text-center">
+                <span className="block text-2xl font-bold text-gray-900">0</span>
+                <span className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Trades</span>
+              </div>
+              <div className="text-center">
+                <span className="block text-2xl font-bold text-gray-900">0.0</span>
+                <span className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Rating</span>
+              </div>
+            </div>
+
+            {/* WANTED SKILLS UPDATE */}
+            <div className="max-w-md mx-auto bg-gray-50 rounded-xl p-5 border border-gray-100">
+              <label className="block text-sm font-semibold text-gray-700 mb-3 text-left">
+                I want to learn...
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="e.g. Python, Design, Singing"
+                  className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-sky-500 outline-none transition shadow-sm"
+                  value={wanted}
+                  onChange={(e) => setWanted(e.target.value)}
+                />
+                <button
+                  onClick={handleUpdate}
+                  disabled={updating}
+                  className="bg-sky-600 hover:bg-sky-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition shadow-sm disabled:opacity-50 active:scale-95"
+                >
+                  {updating ? "Saving..." : "Save"}
+                </button>
+              </div>
+            </div>
+
           </div>
         </div>
 

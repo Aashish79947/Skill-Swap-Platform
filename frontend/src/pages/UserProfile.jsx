@@ -100,13 +100,50 @@ export default function UserProfile() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-6 flex justify-center">
-      <div className="max-w-2xl w-full bg-white shadow-lg rounded-2xl p-6 border border-gray-200">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2 text-center">
-          @{user.username}
-        </h1>
+      <div className="max-w-2xl w-full">
 
-        <h2 className="text-2xl font-semibold mb-4 text-gray-700 text-center">
-          Skills
+        {/* ================= PROFILE CARD ================= */}
+        <div className="bg-white rounded-3xl border border-gray-200 shadow-xl overflow-hidden mb-8">
+
+          {/* Gradient Banner */}
+          <div className="h-24 bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 relative">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+          </div>
+
+          <div className="px-8 pb-8 text-center relative">
+            {/* Avatar (Overlapping) */}
+            <div className="relative -mt-16 mb-4">
+              <div className="mx-auto w-32 h-32 rounded-full border-4 border-white shadow-md bg-white text-purple-600 flex items-center justify-center text-5xl font-bold">
+                {user.username?.charAt(0).toUpperCase()}
+              </div>
+            </div>
+
+            <h1 className="text-3xl font-bold text-gray-900">
+              @{user.username}
+            </h1>
+            <p className="text-gray-500 font-medium">{user.email}</p>
+
+            {/* Stats Row */}
+            {/* Stats Row */}
+            <div className="flex justify-center gap-8 mt-6 mb-2 border-t border-gray-100 pt-6">
+              <div className="text-center">
+                <span className="block text-2xl font-bold text-gray-900">{user.skills?.length || 0}</span>
+                <span className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Skills</span>
+              </div>
+              <div className="text-center">
+                <span className="block text-2xl font-bold text-gray-900">0</span>
+                <span className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Trades</span>
+              </div>
+              <div className="text-center">
+                <span className="block text-2xl font-bold text-gray-900">0.0</span>
+                <span className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Rating</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800 px-2">
+          Skills Offered
         </h2>
 
         {user.skills?.length ? (

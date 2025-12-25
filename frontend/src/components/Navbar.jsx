@@ -18,7 +18,7 @@ export default function Navbar() {
       : "text-gray-600 hover:text-sky-600 font-medium transition";
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+    <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm supports-[backdrop-filter]:bg-white/60">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
 
         {/* Left: Brand + Links */}
