@@ -22,5 +22,38 @@ export const login = async (req, res) => {
   if (!match) return res.status(400).json({ msg: "Wrong password" });
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+  // ... (existing imports and code)
   res.json({ token });
+};
+
+export const getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to load profile" });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { skillsWanted, name } = req.body;
+
+    // Build update object
+    const updateData = {};
+    if (skillsWanted) updateData.skillsWanted = skillsWanted;
+    if (name) updateData.name = name;
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      updateData,
+      { new: true }
+    ).select("-password");
+
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to update profile" });
+  }
 };

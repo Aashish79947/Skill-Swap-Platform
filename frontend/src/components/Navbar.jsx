@@ -41,6 +41,9 @@ export default function Navbar() {
               <NavLink to="/search" className={navLinkClass}>
                 Search
               </NavLink>
+              <NavLink to="/matches" className={navLinkClass}>
+                Matches
+              </NavLink>
               <NavLink to="/profile" className={navLinkClass}>
                 Profile
               </NavLink>
@@ -122,6 +125,9 @@ export default function Navbar() {
                 </NavLink>
                 <NavLink to="/search" className={navLinkClass}>
                   Search
+                </NavLink>
+                <NavLink to="/matches" className={navLinkClass}>
+                  Matches
                 </NavLink>
                 <NavLink to="/profile" className={navLinkClass}>
                   Profile

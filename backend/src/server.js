@@ -9,6 +9,7 @@ import authRoutes from "./routes/auth.routes.js";
 import skillRoutes from "./routes/skill.routes.js";
 import tradeRoutes from "./routes/trade.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
+import matchRoutes from "./routes/match.routes.js";
 
 dotenv.config();
 connectDB();
@@ -59,6 +60,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/skills", skillRoutes);
 app.use("/api/trade", tradeRoutes);
 app.use("/api/chat", chatRoutes(io));
+app.use("/api/matches", matchRoutes);
 
 app.get("/", (req, res) => {
   res.send("API running...");

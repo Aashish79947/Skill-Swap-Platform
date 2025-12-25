@@ -13,6 +13,7 @@ import Requests from "./pages/Requests.jsx";
 import Search from "./pages/Search.jsx";
 import MyProfile from "./pages/MyProfile.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
+import Matches from "./pages/Matches.jsx";
 
 import MessagesList from "./pages/MessagesList.jsx";
 import ChatWindow from "./pages/ChatWindow.jsx";
@@ -68,6 +69,15 @@ function App() {
             />
 
             <Route
+              path="/matches"
+              element={
+                <PrivateRoute>
+                  <Matches />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
               path="/profile"
               element={
                 <PrivateRoute>
@@ -85,7 +95,7 @@ function App() {
               }
             />
 
-            {/* 🔥 CHAT ROUTES (CORRECTED) */}
+            {/* CHAT ROUTES */}
             <Route
               path="/messages"
               element={
@@ -99,7 +109,6 @@ function App() {
               path="/messages/:tradeId"
               element={<ChatWindow />}
             />
-
 
             {/* 404 */}
             <Route

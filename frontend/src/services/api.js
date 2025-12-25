@@ -56,5 +56,8 @@ export const sendChatMessage = (data) =>
 export const getMarketplaceSkills = () =>
   API.get("/skills/marketplace");
 
+/* ================= MATCHING ================= */
+export const updateProfile = (data) => API.put("/auth/profile", data);
+export const getMatches = () => API.get("/matches");
 
 export default API;
