@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import {
   getMarketplaceSkills,
   sendTradeRequest,
@@ -23,7 +24,7 @@ export default function Search() {
       setSkills(res.data || []);
     } catch (err) {
       console.error(err);
-      alert("Failed to load marketplace");
+      toast.error("Failed to load marketplace");
     } finally {
       setLoading(false);
     }
@@ -42,7 +43,7 @@ export default function Search() {
     } catch (err) {
       alert(
         err?.response?.data?.message ||
-          "Failed to send trade request"
+        "Failed to send trade request"
       );
     } finally {
       setSendingId(null);
@@ -147,19 +148,18 @@ export default function Search() {
                     sendingId === skill._id ||
                     requestedIds.has(skill._id)
                   }
-                  className={`mt-4 py-2 rounded-lg font-medium transition ${
-                    requestedIds.has(skill._id)
-                      ? "bg-gray-200 text-gray-600 cursor-not-allowed"
-                      : sendingId === skill._id
+                  className={`mt-4 py-2 rounded-lg font-medium transition ${requestedIds.has(skill._id)
+                    ? "bg-gray-200 text-gray-600 cursor-not-allowed"
+                    : sendingId === skill._id
                       ? "bg-gray-300 text-gray-600 cursor-not-allowed"
                       : "bg-green-500 hover:bg-green-600 text-white"
-                  }`}
+                    }`}
                 >
                   {requestedIds.has(skill._id)
                     ? "Request Sent"
                     : sendingId === skill._id
-                    ? "Sending…"
-                    : "Send Trade Request"}
+                      ? "Sending…"
+                      : "Send Trade Request"}
                 </button>
               </div>
             ))}

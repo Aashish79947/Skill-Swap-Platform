@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import API from "../services/api";
@@ -68,7 +69,7 @@ export default function ChatWindow() {
       await API.post("/chat/send", { tradeId, text });
       setText("");
     } catch {
-      alert("Failed to send message");
+      toast.error("Failed to send message");
     }
   };
 
@@ -95,10 +96,9 @@ export default function ChatWindow() {
             >
               <div
                 className={`max-w-xs px-4 py-2 rounded-2xl shadow text-sm
-                  ${
-                    isMine
-                      ? "bg-sky-500 text-white rounded-br-md"
-                      : "bg-white text-gray-800 border rounded-bl-md"
+                  ${isMine
+                    ? "bg-sky-500 text-white rounded-br-md"
+                    : "bg-white text-gray-800 border rounded-bl-md"
                   }`}
               >
                 <p>{m.text}</p>

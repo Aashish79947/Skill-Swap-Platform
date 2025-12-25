@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate, Link } from "react-router-dom";
 import API from "../services/api";
 
@@ -18,7 +19,7 @@ export default function Requests() {
       });
     } catch (err) {
       console.error("Failed to fetch requests", err);
-      alert("Failed to load requests");
+      toast.error("Failed to load requests");
     } finally {
       setLoading(false);
     }
@@ -30,7 +31,7 @@ export default function Requests() {
       fetchRequests();
     } catch (err) {
       console.error(err);
-      alert(`Failed to ${action} request`);
+      toast.error(`Failed to ${action} request`);
     }
   };
 
@@ -64,7 +65,7 @@ export default function Requests() {
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        
+
         {/* ================= RECEIVED ================= */}
         <section className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-5 text-center">

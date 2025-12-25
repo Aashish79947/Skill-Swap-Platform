@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import API from "../services/api";
 
@@ -57,7 +58,7 @@ export default function UserProfile() {
         receiver_id: receiverId,
         skill_id: skillId,
       });
-      alert("Trade request sent successfully!");
+      toast.success("Trade request sent successfully!");
 
       const res = await API.get("/trade/requests");
       if (res.data?.sent) setRequests({ sent: res.data.sent });
@@ -67,7 +68,7 @@ export default function UserProfile() {
         err?.response?.data?.detail ||
         err?.message ||
         "Failed to send trade request.";
-      alert(msg);
+      toast.error(msg);
     }
   };
 
@@ -129,11 +130,10 @@ export default function UserProfile() {
                   <button
                     disabled={isRequestPending(user.id, skill.name)}
                     onClick={() => handleSendRequest(user.id, skill.id)}
-                    className={`mt-3 px-4 py-2 rounded-lg transition ${
-                      isRequestPending(user.id, skill.name)
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-green-600 hover:bg-green-700 text-white"
-                    }`}
+                    className={`mt-3 px-4 py-2 rounded-lg transition ${isRequestPending(user.id, skill.name)
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-green-600 hover:bg-green-700 text-white"
+                      }`}
                   >
                     {isRequestPending(user.id, skill.name)
                       ? "Request Sent"

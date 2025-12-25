@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { getSkills, addSkill, updateSkill } from "../services/api";
 import SkillCard from "../components/SkillCard";
 
@@ -20,7 +21,7 @@ export default function Dashboard() {
       setSkills(res.data);
     } catch (err) {
       console.error(err);
-      alert("Could not fetch skills");
+      toast.error("Could not fetch skills");
     } finally {
       setLoading(false);
     }
@@ -44,7 +45,7 @@ export default function Dashboard() {
       fetchSkills();
     } catch (err) {
       console.error(err);
-      alert("Action failed");
+      toast.error("Action failed");
     }
   };
 
