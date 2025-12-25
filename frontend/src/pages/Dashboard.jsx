@@ -60,7 +60,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-8">
+    <div className="min-h-screen px-6 py-8">
       <div className="max-w-6xl mx-auto">
 
         {/* PAGE HEADER */}
@@ -74,7 +74,7 @@ export default function Dashboard() {
         </div>
 
         {/* ADD / EDIT SKILL FORM */}
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-10">
+        <div className="glass-card rounded-2xl p-6 mb-10">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             {editing ? "Edit Skill" : "Add New Skill"}
           </h3>

@@ -19,9 +19,19 @@ body,
 }
 
 body {
-    @apply bg-gray-50 text-gray-800 antialiased;
+    @apply bg-slate-50 text-gray-800 antialiased font-sans;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-sm supports-[backdrop-filter]:bg-white/60;
+  }
+  
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/40 shadow-soft hover:shadow-soft-lg transition-all duration-300;
+  }
 }
 
 .container {

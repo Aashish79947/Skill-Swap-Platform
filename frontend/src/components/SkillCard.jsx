@@ -46,12 +46,11 @@ export default function SkillCard({ skill, onDeleted, onEdit }) {
   };
 
   return (
-    <div className="group relative bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+    <div className="glass-card rounded-2xl p-6 flex flex-col justify-between h-full group relative overflow-hidden">
+      {/* Decorative gradient blob */}
+      <div className="absolute -top-10 -right-10 w-24 h-24 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
 
-      {/* Top Accent */}
-      <div className="h-1 bg-gradient-to-r from-sky-400 to-blue-600" />
-
-      <div className="p-6 flex flex-col h-full">
+      <div>
 
         {/* Title */}
         <h3 className="text-lg font-semibold text-gray-900 tracking-tight">

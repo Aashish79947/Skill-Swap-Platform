@@ -59,24 +59,17 @@ export default function Login() {
         </div>
       </div>
 
-      {/* RIGHT: FORM SECTION */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-white sm:p-12 lg:w-1/2">
-        <div className="w-full max-w-md space-y-8">
-          <div className="text-center">
-            {/* Mobile Logo (Visible only on small screens) */}
-            <div className="lg:hidden mb-6">
-              <h1 className="text-3xl font-bold text-gray-900">
-                Skill<span className="text-sky-500">Swap</span>
-              </h1>
-            </div>
+      {/* RIGHT: LOGIN FORM SECTION */}
+      <div className="lg:w-1/2 flex items-center justify-center p-8 lg:p-12 bg-white">
+        <div className="max-w-md w-full">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent text-center mb-6">
+            Welcome Back
+          </h2>
+          <p className="text-center text-gray-500 mb-8">
+            Please enter your details to sign in.
+          </p>
 
-            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Welcome back!</h2>
-            <p className="mt-2 text-sm text-gray-500">
-              Please enter your details to sign in.
-            </p>
-          </div>
-
-          <form onSubmit={submit} className="mt-8 space-y-6">
+          <form onSubmit={submit} className="space-y-6">
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
@@ -84,7 +77,7 @@ export default function Login() {
                   type="email"
                   required
                   placeholder="hello@example.com"
-                  className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                  className="w-full px-4 py-3 rounded-lg bg-gray-50/50 border border-gray-200 focus:border-cyan-500 focus:ring-cyan-500 transition-all outline-none"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                 />
@@ -96,7 +89,7 @@ export default function Login() {
                   type="password"
                   required
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                  className="w-full px-4 py-3 rounded-lg bg-gray-50/50 border border-gray-200 focus:border-cyan-500 focus:ring-cyan-500 transition-all outline-none"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                 />
@@ -109,15 +102,15 @@ export default function Login() {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                  className="h-4 w-4 text-cyan-600 focus:ring-cyan-500 border-gray-300 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-600">
                   Remember me
                 </label>
               </div>
 
               <div className="text-sm">
-                <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors">
+                <a href="#" className="font-medium text-cyan-600 hover:text-cyan-500 transition-colors">
                   Forgot password?
                 </a>
               </div>
@@ -125,17 +118,9 @@ export default function Login() {
 
             <button
               disabled={loading}
-              className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed transform hover:-translate-y-0.5"
+              className="w-full flex justify-center py-3.5 px-4 rounded-lg shadow-lg shadow-cyan-500/30 text-sm font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 transition-all duration-300 transform hover:-translate-y-0.5"
             >
-              {loading ? (
-                <span className="flex items-center gap-2">
-                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Signing in...
-                </span>
-              ) : "Sign in"}
+              {loading ? "Signing in..." : "Sign in"}
             </button>
           </form>
 

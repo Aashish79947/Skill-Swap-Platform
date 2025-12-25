@@ -18,16 +18,16 @@ export default function Navbar() {
       : "text-gray-600 hover:text-sky-600 font-medium transition";
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm supports-[backdrop-filter]:bg-white/60">
+    <nav className="sticky top-0 z-50 glass">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
 
         {/* Left: Brand + Links */}
         <div className="flex items-center gap-6">
           <Link
             to="/"
-            className="text-xl font-semibold text-gray-900 tracking-tight"
+            className="text-2xl font-bold tracking-tight bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent"
           >
-            Skill<span className="text-sky-500">Swap</span>
+            SkillSwap
           </Link>
 
           {token && (
@@ -113,7 +113,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden border-t bg-white">
+        <div className="md:hidden border-t border-white/20 glass absolute w-full left-0">
           <div className="px-6 py-4 flex flex-col gap-3 text-sm">
             {token && (
               <>
