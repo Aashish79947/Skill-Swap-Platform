@@ -1,7 +1,12 @@
 import TradeRequest from "../models/tradeRequest.js";
 import Skill from "../models/skill.js";
 
-// Send a trade request
+/**
+ * @function sendRequest
+ * @description Send a new trade request for a specific skill.
+ * @route POST /api/trade/request
+ * @access Private
+ */
 export const sendRequest = async (req, res) => {
     const { skillId } = req.body;
 
@@ -14,11 +19,12 @@ export const sendRequest = async (req, res) => {
         return res.status(404).json({ message: "Skill not found" });
     }
 
-    // ❌ cannot trade with yourself
+    // Prevent self-trading
     if (skill.user.toString() === req.user.id) {
         return res.status(400).json({ message: "You cannot trade with yourself" });
     }
 
+    // Check for existing pending request
     const existing = await TradeRequest.findOne({
         sender: req.user.id,
         receiver: skill.user,
@@ -39,14 +45,21 @@ export const sendRequest = async (req, res) => {
     res.status(201).json(request);
 };
 
-// Get sent and received requests
+/**
+ * @function getRequests
+ * @description Get all trade requests (sent and received) for the user.
+ * @route GET /api/trade/requests
+ * @access Private
+ */
 export const getRequests = async (req, res) => {
     const userId = req.user.id;
 
+    // Fetch outgoing requests
     const sent = await TradeRequest.find({ sender: userId })
         .populate("receiver", "email")
         .populate("skill", "title category");
 
+    // Fetch incoming requests
     const received = await TradeRequest.find({ receiver: userId })
         .populate("sender", "email")
         .populate("skill", "title category");
@@ -54,7 +67,12 @@ export const getRequests = async (req, res) => {
     res.json({ sent, received });
 };
 
-// Accept a trade request
+/**
+ * @function acceptRequest
+ * @description Accept an incoming trade request.
+ * @route PUT /api/trade/requests/:id/accept
+ * @access Private (Receiver Only)
+ */
 export const acceptRequest = async (req, res) => {
     const request = await TradeRequest.findById(req.params.id);
 
@@ -72,7 +90,12 @@ export const acceptRequest = async (req, res) => {
     res.json({ message: "Trade accepted" });
 };
 
-// Reject a trade request
+/**
+ * @function rejectRequest
+ * @description Reject an incoming trade request.
+ * @route PUT /api/trade/requests/:id/reject
+ * @access Private (Receiver Only)
+ */
 export const rejectRequest = async (req, res) => {
     const request = await TradeRequest.findById(req.params.id);
 

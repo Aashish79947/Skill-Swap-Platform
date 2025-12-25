@@ -4,18 +4,23 @@ import toast from "react-hot-toast";
 
 const AuthContext = createContext(null);
 
+/**
+ * @component AuthProvider
+ * @description Manages global authentication state, token storage, and decoding.
+ * Wraps the entire application to provide 'user' and 'token' access.
+ */
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem("token"));
     const [loading, setLoading] = useState(true);
 
-    // Initialize Auth State
+    // Initialize Auth State on Mount
     useEffect(() => {
         if (token) {
             try {
                 const decoded = jwtDecode(token);
 
-                // Check for expiration
+                // Auto logout if token is expired
                 const currentTime = Date.now() / 1000;
                 if (decoded.exp < currentTime) {
                     logout();
@@ -49,6 +54,11 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
+/**
+ * @hook useAuth
+ * @description Custom hook to access auth context.
+ * @returns {Object} { user, token, login, logout, loading }
+ */
 export const useAuth = () => {
     return useContext(AuthContext);
 };

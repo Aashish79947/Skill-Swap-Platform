@@ -2,16 +2,28 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+/**
+ * @function register
+ * @description Registers a new user with hashed password.
+ * @route POST /api/auth/register
+ * @access Public
+ */
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
 
   const hashed = await bcrypt.hash(password, 10);
-  const user = await User.create({ name, email, password: hashed });
+  await User.create({ name, email, password: hashed });
 
-  // FIX: Do not return the entire user object (which includes password hash)
+  // Return success message only (never return the full user object with hash)
   res.status(201).json({ message: "User registered successfully" });
 };
 
+/**
+ * @function login
+ * @description Authenticates user and issues a JWT token.
+ * @route POST /api/auth/login
+ * @access Public
+ */
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -22,10 +34,15 @@ export const login = async (req, res) => {
   if (!match) return res.status(400).json({ msg: "Wrong password" });
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-  // ... (existing imports and code)
   res.json({ token });
 };
 
+/**
+ * @function getProfile
+ * @description Retrieves current user's profile excluding password.
+ * @route GET /api/auth/profile
+ * @access Private
+ */
 export const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
@@ -36,11 +53,17 @@ export const getProfile = async (req, res) => {
   }
 };
 
+/**
+ * @function updateProfile
+ * @description Updates user profile fields (e.g., name, skillsWanted).
+ * @route PUT /api/auth/profile
+ * @access Private
+ */
 export const updateProfile = async (req, res) => {
   try {
     const { skillsWanted, name } = req.body;
 
-    // Build update object
+    // Explicitly build update object for security
     const updateData = {};
     if (skillsWanted) updateData.skillsWanted = skillsWanted;
     if (name) updateData.name = name;

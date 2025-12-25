@@ -1,6 +1,11 @@
 import Skill from "../models/skill.js";
 
-// Create a new skill
+/**
+ * @function createSkill
+ * @description Create a new skill to offer in the marketplace.
+ * @route POST /api/skills
+ * @access Private
+ */
 export const createSkill = async (req, res) => {
     const { title, description, category } = req.body;
 
@@ -18,7 +23,12 @@ export const createSkill = async (req, res) => {
     res.status(201).json(skill);
 };
 
-// Get current user's skills
+/**
+ * @function getMySkills
+ * @description Get all skills offered by the current user (Dashboard).
+ * @route GET /api/skills/my
+ * @access Private
+ */
 export const getMySkills = async (req, res) => {
     try {
         const skills = await Skill.find({ user: req.user.id });
@@ -28,7 +38,12 @@ export const getMySkills = async (req, res) => {
     }
 };
 
-// Get marketplace skills (others' skills)
+/**
+ * @function getMarketplace
+ * @description Get all skills offered by OTHER users.
+ * @route GET /api/skills/marketplace
+ * @access Private
+ */
 export const getMarketplace = async (req, res) => {
     const skills = await Skill.find({
         user: { $ne: req.user.id },
@@ -37,7 +52,12 @@ export const getMarketplace = async (req, res) => {
     res.json(skills);
 };
 
-// Update a skill
+/**
+ * @function updateSkill
+ * @description Update details of an existing skill.
+ * @route PUT /api/skills/:id
+ * @access Private (Owner Only)
+ */
 export const updateSkill = async (req, res) => {
     const { title, description, category } = req.body;
 
@@ -54,7 +74,12 @@ export const updateSkill = async (req, res) => {
     res.json(skill);
 };
 
-// Delete a skill
+/**
+ * @function deleteSkill
+ * @description Remove a skill from the marketplace.
+ * @route DELETE /api/skills/:id
+ * @access Private (Owner Only)
+ */
 export const deleteSkill = async (req, res) => {
     try {
         await Skill.findOneAndDelete({
