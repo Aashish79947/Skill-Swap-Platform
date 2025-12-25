@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { registerUser } from "../services/api";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -19,7 +20,7 @@ export default function Register() {
       !form.email.trim() ||
       !form.password.trim()
     ) {
-      alert("Please fill all fields before registering.");
+      toast.error("Please fill all fields before registering.");
       return;
     }
 
@@ -31,14 +32,14 @@ export default function Register() {
         password: form.password.trim(),
       });
 
-      alert(res.data?.message || "Registered successfully — please login");
+      toast.success(res.data?.message || "Registered successfully — please login");
       navigate("/login");
     } catch (err) {
       const detail = err.response?.data?.detail;
       if (Array.isArray(detail)) {
-        alert(detail.map((e) => e.msg).join("\n"));
+        toast.error(detail.map((e) => e.msg).join("\n"));
       } else {
-        alert(detail || "Registration failed. Please try again.");
+        toast.error(detail || "Registration failed. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -48,7 +49,7 @@ export default function Register() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
       <div className="w-full max-w-md bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
-        
+
         {/* BRAND */}
         <div className="text-center mb-6">
           <h1 className="text-2xl font-semibold text-gray-900">

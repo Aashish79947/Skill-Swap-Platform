@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { loginUser } from "../services/api";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -13,9 +14,10 @@ export default function Login() {
     try {
       const res = await loginUser(form);
       localStorage.setItem("token", res.data.token);
+      toast.success("Welcome back!");
       navigate("/dashboard");
     } catch (err) {
-      alert(err?.response?.data?.detail || "Login failed");
+      toast.error(err?.response?.data?.detail || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -24,7 +26,7 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
       <div className="w-full max-w-md bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
-        
+
         {/* BRAND */}
         <div className="text-center mb-6">
           <h1 className="text-2xl font-semibold text-gray-900">
