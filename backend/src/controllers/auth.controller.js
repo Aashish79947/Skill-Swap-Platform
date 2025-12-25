@@ -8,7 +8,8 @@ export const register = async (req, res) => {
   const hashed = await bcrypt.hash(password, 10);
   const user = await User.create({ name, email, password: hashed });
 
-  res.json(user);
+  // FIX: Do not return the entire user object (which includes password hash)
+  res.status(201).json({ message: "User registered successfully" });
 };
 
 export const login = async (req, res) => {
