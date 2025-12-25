@@ -18,14 +18,27 @@ import Matches from "./pages/Matches.jsx";
 import MessagesList from "./pages/MessagesList.jsx";
 import ChatWindow from "./pages/ChatWindow.jsx";
 
+import { useLocation } from "react-router-dom";
+
+function Layout({ children }) {
+  const location = useLocation();
+  const hideNavbarRoutes = ["/login", "/register"];
+  const showNavbar = !hideNavbarRoutes.includes(location.pathname);
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Toaster position="top-center" reverseOrder={false} />
+      {showNavbar && <Navbar />}
+      {children}
+    </div>
+  );
+}
+
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-gray-50">
-          <Toaster position="top-center" reverseOrder={false} />
-          <Navbar />
-
+        <Layout>
           <Routes>
             {/* PUBLIC ROUTES */}
             <Route path="/login" element={<Login />} />
@@ -120,7 +133,7 @@ function App() {
               }
             />
           </Routes>
-        </div>
+        </Layout>
       </Router>
     </AuthProvider>
   );
