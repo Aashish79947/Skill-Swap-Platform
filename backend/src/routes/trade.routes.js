@@ -7,18 +7,20 @@ import {
   rejectRequest,
 } from "../controllers/trade.controller.js";
 
-const router = express.Router();
+export default function tradeRoutes(io) {
+  const router = express.Router();
 
-/* ================= SEND TRADE REQUEST ================= */
-router.post("/request", auth, sendRequest);
+  /* ================= SEND TRADE REQUEST ================= */
+  router.post("/request", auth, (req, res) => sendRequest(req, res, io));
 
-/* ================= GET MY REQUESTS ================= */
-router.get("/requests", auth, getRequests);
+  /* ================= GET MY REQUESTS ================= */
+  router.get("/requests", auth, getRequests);
 
-/* ================= ACCEPT REQUEST ================= */
-router.put("/requests/:id/accept", auth, acceptRequest);
+  /* ================= ACCEPT REQUEST ================= */
+  router.put("/requests/:id/accept", auth, (req, res) => acceptRequest(req, res, io));
 
-/* ================= REJECT REQUEST ================= */
-router.put("/requests/:id/reject", auth, rejectRequest);
+  /* ================= REJECT REQUEST ================= */
+  router.put("/requests/:id/reject", auth, (req, res) => rejectRequest(req, res, io));
 
-export default router;
+  return router;
+}

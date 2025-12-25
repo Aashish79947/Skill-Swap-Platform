@@ -10,6 +10,7 @@ import skillRoutes from "./routes/skill.routes.js";
 import tradeRoutes from "./routes/trade.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
 import matchRoutes from "./routes/match.routes.js";
+import notificationRoutes from "./routes/notification.routes.js";
 
 dotenv.config();
 connectDB();
@@ -48,6 +49,11 @@ io.on("connection", (socket) => {
     console.log(`📦 Joined trade room: ${tradeId}`);
   });
 
+  socket.on("join_user", (userId) => {
+    socket.join(`user_${userId}`);
+    console.log(`👤 User joined private room: user_${userId}`);
+  });
+
   socket.on("disconnect", () => {
     console.log("🔴 User disconnected:", socket.id);
   });
@@ -58,9 +64,10 @@ io.on("connection", (socket) => {
 ========================= */
 app.use("/api/auth", authRoutes);
 app.use("/api/skills", skillRoutes);
-app.use("/api/trade", tradeRoutes);
+app.use("/api/trade", tradeRoutes(io));
 app.use("/api/chat", chatRoutes(io));
 app.use("/api/matches", matchRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.get("/", (req, res) => {
   res.send("API running...");

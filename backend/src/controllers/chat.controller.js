@@ -1,5 +1,6 @@
 import Message from "../models/message.js";
 import TradeRequest from "../models/tradeRequest.js";
+import Notification from "../models/notification.js";
 import mongoose from "mongoose";
 
 // Get all conversations (inbox)
@@ -98,7 +99,19 @@ export const sendMessage = async (req, res, io) => {
 
         const populated = await message.populate("sender", "email");
 
+        // Real-time message event for the trade room
         io.to(tradeId).emit("receive_message", populated);
+
+        // CREATE NOTIFICATION FOR RECEIVER
+        const notification = await Notification.create({
+            user: receiver,
+            message: `New message from ${populated.sender.email}`,
+            type: "new_message",
+            link: `/messages/${tradeId}`, // Assuming structure, though current messages use index/params
+        });
+
+        // EMIT TO RECEIVER'S PRIVATE ROOM
+        io.to(`user_${receiver}`).emit("new_notification", notification);
 
         res.status(201).json(populated);
     } catch (err) {

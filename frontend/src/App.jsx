@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 import { AuthProvider } from "./context/AuthContext.jsx";
+import { NotificationProvider } from "./context/NotificationContext.jsx";
 import Navbar from "./components/Navbar.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 
@@ -37,104 +38,107 @@ function Layout({ children }) {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Layout>
-          <Routes>
-            {/* PUBLIC ROUTES */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+      <NotificationProvider>
+        <Router>
+          <Layout>
+            <Routes>
+              {/* ... routes ... */}
+              {/* PUBLIC ROUTES */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
 
-            {/* PROTECTED ROUTES */}
-            <Route
-              path="/"
-              element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              }
-            />
+              {/* PROTECTED ROUTES */}
+              <Route
+                path="/"
+                element={
+                  <PrivateRoute>
+                    <Dashboard />
+                  </PrivateRoute>
+                }
+              />
 
-            <Route
-              path="/dashboard"
-              element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              }
-            />
+              <Route
+                path="/dashboard"
+                element={
+                  <PrivateRoute>
+                    <Dashboard />
+                  </PrivateRoute>
+                }
+              />
 
-            <Route
-              path="/requests"
-              element={
-                <PrivateRoute>
-                  <Requests />
-                </PrivateRoute>
-              }
-            />
+              <Route
+                path="/requests"
+                element={
+                  <PrivateRoute>
+                    <Requests />
+                  </PrivateRoute>
+                }
+              />
 
-            <Route
-              path="/search"
-              element={
-                <PrivateRoute>
-                  <Search />
-                </PrivateRoute>
-              }
-            />
+              <Route
+                path="/search"
+                element={
+                  <PrivateRoute>
+                    <Search />
+                  </PrivateRoute>
+                }
+              />
 
-            <Route
-              path="/matches"
-              element={
-                <PrivateRoute>
-                  <Matches />
-                </PrivateRoute>
-              }
-            />
+              <Route
+                path="/matches"
+                element={
+                  <PrivateRoute>
+                    <Matches />
+                  </PrivateRoute>
+                }
+              />
 
-            <Route
-              path="/profile"
-              element={
-                <PrivateRoute>
-                  <MyProfile />
-                </PrivateRoute>
-              }
-            />
+              <Route
+                path="/profile"
+                element={
+                  <PrivateRoute>
+                    <MyProfile />
+                  </PrivateRoute>
+                }
+              />
 
-            <Route
-              path="/profile/:id"
-              element={
-                <PrivateRoute>
-                  <UserProfile />
-                </PrivateRoute>
-              }
-            />
+              <Route
+                path="/profile/:id"
+                element={
+                  <PrivateRoute>
+                    <UserProfile />
+                  </PrivateRoute>
+                }
+              />
 
-            {/* CHAT ROUTES */}
-            <Route
-              path="/messages"
-              element={
-                <PrivateRoute>
-                  <MessagesList />
-                </PrivateRoute>
-              }
-            />
+              {/* CHAT ROUTES */}
+              <Route
+                path="/messages"
+                element={
+                  <PrivateRoute>
+                    <MessagesList />
+                  </PrivateRoute>
+                }
+              />
 
-            <Route
-              path="/messages/:tradeId"
-              element={<ChatWindow />}
-            />
+              <Route
+                path="/messages/:tradeId"
+                element={<ChatWindow />}
+              />
 
-            {/* 404 */}
-            <Route
-              path="*"
-              element={
-                <div className="p-6 text-center text-gray-600">
-                  404 | Page Not Found
-                </div>
-              }
-            />
-          </Routes>
-        </Layout>
-      </Router>
+              {/* 404 */}
+              <Route
+                path="*"
+                element={
+                  <div className="p-6 text-center text-gray-600">
+                    404 | Page Not Found
+                  </div>
+                }
+              />
+            </Routes>
+          </Layout>
+        </Router>
+      </NotificationProvider>
     </AuthProvider>
   );
 }

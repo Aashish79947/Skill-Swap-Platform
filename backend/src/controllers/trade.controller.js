@@ -1,5 +1,7 @@
 import TradeRequest from "../models/tradeRequest.js";
 import Skill from "../models/skill.js";
+import Notification from "../models/notification.js";
+import User from "../models/User.js";
 
 /**
  * @function sendRequest
@@ -7,7 +9,7 @@ import Skill from "../models/skill.js";
  * @route POST /api/trade/request
  * @access Private
  */
-export const sendRequest = async (req, res) => {
+export const sendRequest = async (req, res, io) => {
     const { skillId } = req.body;
 
     if (!skillId) {
@@ -42,6 +44,20 @@ export const sendRequest = async (req, res) => {
         skill: skillId,
     });
 
+    // CREATE NOTIFICATION FOR RECEIVER
+    const senderUser = await User.findById(req.user.id);
+    const notification = await Notification.create({
+        user: skill.user,
+        message: `${senderUser.email} sent you a trade request for "${skill.title}"`,
+        type: "trade_request",
+        link: "/requests",
+    });
+
+    // EMIT TO RECEIVER'S PRIVATE ROOM
+    if (io) {
+        io.to(`user_${skill.user}`).emit("new_notification", notification);
+    }
+
     res.status(201).json(request);
 };
 
@@ -73,7 +89,7 @@ export const getRequests = async (req, res) => {
  * @route PUT /api/trade/requests/:id/accept
  * @access Private (Receiver Only)
  */
-export const acceptRequest = async (req, res) => {
+export const acceptRequest = async (req, res, io) => {
     const request = await TradeRequest.findById(req.params.id);
 
     if (!request) {
@@ -87,6 +103,19 @@ export const acceptRequest = async (req, res) => {
     request.status = "accepted";
     await request.save();
 
+    // CREATE NOTIFICATION FOR SENDER
+    const notification = await Notification.create({
+        user: request.sender,
+        message: `Your trade request for skill was accepted!`,
+        type: "trade_accepted",
+        link: "/requests",
+    });
+
+    // EMIT TO SENDER'S PRIVATE ROOM
+    if (io) {
+        io.to(`user_${request.sender}`).emit("new_notification", notification);
+    }
+
     res.json({ message: "Trade accepted" });
 };
 
@@ -96,7 +125,7 @@ export const acceptRequest = async (req, res) => {
  * @route PUT /api/trade/requests/:id/reject
  * @access Private (Receiver Only)
  */
-export const rejectRequest = async (req, res) => {
+export const rejectRequest = async (req, res, io) => {
     const request = await TradeRequest.findById(req.params.id);
 
     if (!request) {
@@ -109,6 +138,19 @@ export const rejectRequest = async (req, res) => {
 
     request.status = "rejected";
     await request.save();
+
+    // CREATE NOTIFICATION FOR SENDER
+    const notification = await Notification.create({
+        user: request.sender,
+        message: `Your trade request was rejected.`,
+        type: "trade_rejected",
+        link: "/requests",
+    });
+
+    // EMIT TO SENDER'S PRIVATE ROOM
+    if (io) {
+        io.to(`user_${request.sender}`).emit("new_notification", notification);
+    }
 
     res.json({ message: "Trade rejected" });
 };
