@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Navbar() {
-  const token = localStorage.getItem("token");
+  const { token, logout } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
-  const logout = () => {
-    localStorage.removeItem("token");
+  const handleLogout = () => {
+    logout();
     navigate("/login");
   };
 
@@ -19,7 +20,7 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-        
+
         {/* Left: Brand + Links */}
         <div className="flex items-center gap-6">
           <Link
@@ -97,7 +98,7 @@ export default function Navbar() {
               </div>
             ) : (
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition text-sm font-medium"
               >
                 Logout
@@ -148,7 +149,7 @@ export default function Navbar() {
               </div>
             ) : (
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition mt-2"
               >
                 Logout

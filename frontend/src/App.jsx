@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
+import { AuthProvider } from "./context/AuthContext.jsx";
 import Navbar from "./components/Navbar.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 
@@ -17,114 +18,102 @@ import MessagesList from "./pages/MessagesList.jsx";
 import ChatWindow from "./pages/ChatWindow.jsx";
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        setCurrentUser({ id: payload.id });
-      } catch (error) {
-        console.error("Failed to decode JWT:", error);
-      }
-    }
-  }, []);
-
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Toaster position="top-center" reverseOrder={false} />
-        <Navbar />
+    <AuthProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-50">
+          <Toaster position="top-center" reverseOrder={false} />
+          <Navbar />
 
-        <Routes>
-          {/* PUBLIC ROUTES */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Routes>
+            {/* PUBLIC ROUTES */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-          {/* PROTECTED ROUTES */}
-          <Route
-            path="/"
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            }
-          />
+            {/* PROTECTED ROUTES */}
+            <Route
+              path="/"
+              element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
 
-          <Route
-            path="/dashboard"
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            }
-          />
+            <Route
+              path="/dashboard"
+              element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
 
-          <Route
-            path="/requests"
-            element={
-              <PrivateRoute>
-                <Requests />
-              </PrivateRoute>
-            }
-          />
+            <Route
+              path="/requests"
+              element={
+                <PrivateRoute>
+                  <Requests />
+                </PrivateRoute>
+              }
+            />
 
-          <Route
-            path="/search"
-            element={
-              <PrivateRoute>
-                <Search />
-              </PrivateRoute>
-            }
-          />
+            <Route
+              path="/search"
+              element={
+                <PrivateRoute>
+                  <Search />
+                </PrivateRoute>
+              }
+            />
 
-          <Route
-            path="/profile"
-            element={
-              <PrivateRoute>
-                <MyProfile />
-              </PrivateRoute>
-            }
-          />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute>
+                  <MyProfile />
+                </PrivateRoute>
+              }
+            />
 
-          <Route
-            path="/profile/:id"
-            element={
-              <PrivateRoute>
-                <UserProfile />
-              </PrivateRoute>
-            }
-          />
+            <Route
+              path="/profile/:id"
+              element={
+                <PrivateRoute>
+                  <UserProfile />
+                </PrivateRoute>
+              }
+            />
 
-          {/* 🔥 CHAT ROUTES (CORRECTED) */}
-          <Route
-            path="/messages"
-            element={
-              <PrivateRoute>
-                <MessagesList />
-              </PrivateRoute>
-            }
-          />
+            {/* 🔥 CHAT ROUTES (CORRECTED) */}
+            <Route
+              path="/messages"
+              element={
+                <PrivateRoute>
+                  <MessagesList />
+                </PrivateRoute>
+              }
+            />
 
-          <Route
-            path="/messages/:tradeId"
-            element={<ChatWindow />}
-          />
+            <Route
+              path="/messages/:tradeId"
+              element={<ChatWindow />}
+            />
 
 
-          {/* 404 */}
-          <Route
-            path="*"
-            element={
-              <div className="p-6 text-center text-gray-600">
-                404 | Page Not Found
-              </div>
-            }
-          />
-        </Routes>
-      </div>
-    </Router>
+            {/* 404 */}
+            <Route
+              path="*"
+              element={
+                <div className="p-6 text-center text-gray-600">
+                  404 | Page Not Found
+                </div>
+              }
+            />
+          </Routes>
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
 

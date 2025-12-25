@@ -2,18 +2,20 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { loginUser } from "../services/api";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const submit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       const res = await loginUser(form);
-      localStorage.setItem("token", res.data.token);
+      login(res.data.token);
       toast.success("Welcome back!");
       navigate("/dashboard");
     } catch (err) {
