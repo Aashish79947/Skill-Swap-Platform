@@ -64,5 +64,6 @@ export const getMatches = () => API.get("/matches");
 export const getNotifications = () => API.get("/notifications");
 export const markNotificationAsRead = (id) => API.put(`/notifications/${id}/read`);
 export const markAllNotificationsAsRead = () => API.put("/notifications/read-all");
+export const clearNotifications = () => API.delete("/notifications");
 
 export default API;

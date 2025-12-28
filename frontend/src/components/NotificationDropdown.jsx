@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useNotifications } from "../context/NotificationContext";
 
 export default function NotificationDropdown({ onClose }) {
-    const { notifications, markAsRead, markAllRead } = useNotifications();
+    const { notifications, markAsRead, markAllRead, clearAll } = useNotifications();
     const navigate = useNavigate();
 
     const handleNotificationClick = async (n) => {
@@ -56,7 +56,13 @@ export default function NotificationDropdown({ onClose }) {
                 )}
             </div>
 
-            <div className="p-3 text-center bg-white/10 border-t border-white/20">
+            <div className="p-3 flex justify-between items-center bg-white/10 border-t border-white/20">
+                <button
+                    onClick={clearAll}
+                    className="text-xs text-red-600 hover:text-red-700 font-medium transition"
+                >
+                    Clear All
+                </button>
                 <button
                     onClick={onClose}
                     className="text-xs text-gray-600 hover:text-gray-800 transition"
@@ -64,6 +70,7 @@ export default function NotificationDropdown({ onClose }) {
                     Close
                 </button>
             </div>
+
         </div>
     );
 }
