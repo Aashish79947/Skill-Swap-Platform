@@ -38,10 +38,9 @@ export default function MessagesList() {
                 navigate(`/messages/${c.conversation_key}`)
               }
               className={`flex items-center gap-4 px-5 py-4 cursor-pointer transition
-                hover:bg-gray-50 ${
-                  index !== conversations.length - 1
-                    ? "border-b border-gray-200"
-                    : ""
+                hover:bg-gray-50 ${index !== conversations.length - 1
+                  ? "border-b border-gray-200"
+                  : ""
                 }`}
             >
               {/* Avatar */}
@@ -53,8 +52,9 @@ export default function MessagesList() {
               <div className="flex-grow min-w-0">
                 <div className="flex justify-between items-center">
                   <p className="font-medium text-gray-900 truncate">
-                    {c.partner_email}
+                    {c.partner_email} <span className="text-gray-500 font-normal">({c.skill_title})</span>
                   </p>
+
                   <span className="text-xs text-gray-400 ml-2 whitespace-nowrap">
                     {new Date(c.timestamp).toLocaleTimeString([], {
                       hour: "2-digit",
