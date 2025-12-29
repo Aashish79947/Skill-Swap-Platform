@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { getMatches, sendTradeRequest } from "../services/api";
+import { getMatches, sendTradeRequest, getTradeRequests } from "../services/api";
 import toast from "react-hot-toast";
 
 export default function Matches() {
     const [matches, setMatches] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [sendingId, setSendingId] = useState(null);
+    const [requestedIds, setRequestedIds] = useState(new Set());
 
     useEffect(() => {
         fetchMatches();
@@ -12,8 +14,17 @@ export default function Matches() {
 
     const fetchMatches = async () => {
         try {
-            const res = await getMatches();
-            setMatches(res.data);
+            const [matchesRes, requestsRes] = await Promise.all([
+                getMatches(),
+                getTradeRequests()
+            ]);
+
+            setMatches(matchesRes.data);
+
+            // Fetch IDs of skills that already have a pending or accepted request sent by the user
+            const sentRequests = requestsRes.data.sent || [];
+            const ids = new Set(sentRequests.map(req => req.skill?._id).filter(Boolean));
+            setRequestedIds(ids);
         } catch (err) {
             toast.error("Failed to load matches");
         } finally {
@@ -23,10 +34,14 @@ export default function Matches() {
 
     const handleConnect = async (skillId) => {
         try {
+            setSendingId(skillId);
             await sendTradeRequest({ skillId });
             toast.success("Request sent!");
+            setRequestedIds(prev => new Set(prev).add(skillId));
         } catch (err) {
             toast.error(err.response?.data?.message || "Failed to send request");
+        } finally {
+            setSendingId(null);
         }
     };
 
@@ -97,9 +112,19 @@ export default function Matches() {
                                                 </p>
                                                 <button
                                                     onClick={() => handleConnect(skill._id)}
-                                                    className="mt-3 w-full text-xs bg-sky-500 hover:bg-sky-600 text-white py-2 rounded-md font-medium transition"
+                                                    disabled={sendingId === skill._id || requestedIds.has(skill._id)}
+                                                    className={`mt-3 w-full text-xs py-2 rounded-md font-medium transition ${requestedIds.has(skill._id)
+                                                        ? "bg-gray-200 text-gray-600 cursor-not-allowed"
+                                                        : sendingId === skill._id
+                                                            ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                                                            : "bg-sky-500 hover:bg-sky-600 text-white"
+                                                        }`}
                                                 >
-                                                    Request Trade
+                                                    {requestedIds.has(skill._id)
+                                                        ? "Request Sent"
+                                                        : sendingId === skill._id
+                                                            ? "Sending..."
+                                                            : "Request Trade"}
                                                 </button>
                                             </div>
                                         ))}
