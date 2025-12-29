@@ -10,6 +10,9 @@ export default function UserProfile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [requests, setRequests] = useState({ sent: [] });
+  const [reviews, setReviews] = useState([]);
+  const [reviewStats, setReviewStats] = useState({ averageRating: 0, totalReviews: 0 });
+
 
   useEffect(() => {
     const fetchMyProfile = async () => {
@@ -42,6 +45,11 @@ export default function UserProfile() {
         setLoading(true);
         const res = await API.get(`/users/${id}`);
         setUser(res.data);
+
+        // Fetch reviews
+        const reviewsRes = await API.get(`/reviews/user/${id}`);
+        setReviews(reviewsRes.data.reviews || []);
+        setReviewStats(reviewsRes.data.stats || { averageRating: 0, totalReviews: 0 });
       } catch (err) {
         console.error("Error fetching user profile:", err);
         setError("Failed to load user profile.");
@@ -51,6 +59,7 @@ export default function UserProfile() {
     };
     if (id) fetchUserProfile();
   }, [id]);
+
 
   const handleSendRequest = async (receiverId, skillId) => {
     try {
@@ -135,12 +144,13 @@ export default function UserProfile() {
                 <span className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Trades</span>
               </div>
               <div className="text-center">
-                <span className="block text-2xl font-bold text-gray-900">0.0</span>
+                <span className="block text-2xl font-bold text-gray-900">{reviewStats.averageRating?.toFixed(1) || "0.0"}</span>
                 <span className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Rating</span>
               </div>
             </div>
           </div>
         </div>
+
 
         <h2 className="text-2xl font-semibold mb-6 text-gray-800 px-2">
           Skills Offered
@@ -183,7 +193,39 @@ export default function UserProfile() {
         ) : (
           <p className="text-gray-500 text-center">No skills found.</p>
         )}
+
+        {/* ================= REVIEWS SECTION ================= */}
+        <div className="mt-12">
+          <h2 className="text-2xl font-semibold mb-6 text-gray-800 px-2">
+            Reviews ({reviewStats.totalReviews})
+          </h2>
+          {reviews.length > 0 ? (
+            <div className="space-y-4">
+              {reviews.map((rev) => (
+                <div key={rev._id} className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <span className="font-semibold text-gray-900">{rev.reviewer?.name || rev.reviewer?.email}</span>
+                      <div className="flex text-yellow-400 text-sm mt-0.5">
+                        {"★".repeat(rev.rating)}{"☆".repeat(5 - rev.rating)}
+                      </div>
+                    </div>
+                    <span className="text-xs text-gray-400">
+                      {new Date(rev.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="text-gray-600 text-sm italic">"{rev.comment || "No comment provided."}"</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-center bg-white border border-dashed border-gray-200 py-8 rounded-2xl">
+              No reviews yet.
+            </p>
+          )}
+        </div>
       </div>
     </div>
+
   );
 }

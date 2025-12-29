@@ -11,6 +11,8 @@ import tradeRoutes from "./routes/trade.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
 import matchRoutes from "./routes/match.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
+import reviewRoutes from "./routes/review.routes.js";
+
 
 dotenv.config();
 connectDB();
@@ -68,6 +70,8 @@ app.use("/api/trade", tradeRoutes(io));
 app.use("/api/chat", chatRoutes(io));
 app.use("/api/matches", matchRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/reviews", reviewRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("API running...");

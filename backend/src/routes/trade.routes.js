@@ -5,6 +5,7 @@ import {
   getRequests,
   acceptRequest,
   rejectRequest,
+  completeRequest,
 } from "../controllers/trade.controller.js";
 
 export default function tradeRoutes(io) {
@@ -21,6 +22,9 @@ export default function tradeRoutes(io) {
 
   /* ================= REJECT REQUEST ================= */
   router.put("/requests/:id/reject", auth, (req, res) => rejectRequest(req, res, io));
+
+  /* ================= COMPLETE REQUEST ================= */
+  router.put("/requests/:id/complete", auth, completeRequest);
 
   return router;
 }

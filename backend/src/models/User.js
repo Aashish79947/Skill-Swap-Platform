@@ -8,6 +8,14 @@ const userSchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
+  averageRating: {
+    type: Number,
+    default: 0,
+  },
+  totalReviews: {
+    type: Number,
+    default: 0,
+  },
 });
 
 export default mongoose.model("User", userSchema);

@@ -154,3 +154,38 @@ export const rejectRequest = async (req, res, io) => {
 
     res.json({ message: "Trade rejected" });
 };
+
+/**
+ * @function completeRequest
+ * @description Mark a trade as completed.
+ * @route PUT /api/trade/requests/:id/complete
+ * @access Private (Sender or Receiver)
+ */
+export const completeRequest = async (req, res) => {
+    try {
+        const request = await TradeRequest.findById(req.params.id);
+
+        if (!request) {
+            return res.status(404).json({ message: "Request not found" });
+        }
+
+        if (
+            request.sender.toString() !== req.user.id &&
+            request.receiver.toString() !== req.user.id
+        ) {
+            return res.status(403).json({ message: "Unauthorized" });
+        }
+
+        if (request.status !== "accepted") {
+            return res.status(400).json({ message: "Only accepted trades can be completed" });
+        }
+
+        request.status = "completed";
+        await request.save();
+
+        res.json({ message: "Trade marked as completed" });
+    } catch (err) {
+        res.status(500).json({ message: "Failed to complete trade" });
+    }
+};
+

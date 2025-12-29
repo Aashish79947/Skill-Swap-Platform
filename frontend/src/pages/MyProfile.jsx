@@ -10,6 +10,9 @@ export default function MyProfile() {
   const [error, setError] = useState("");
   const [wanted, setWanted] = useState("");
   const [updating, setUpdating] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [reviewStats, setReviewStats] = useState({ averageRating: 0, totalReviews: 0 });
+
 
   /* ================================
      LOAD PROFILE
@@ -21,10 +24,14 @@ export default function MyProfile() {
       if (res.data.skillsWanted) {
         setWanted(res.data.skillsWanted.join(", "));
       }
+      if (res.data._id || res.data.id) {
+        loadReviews(res.data._id || res.data.id);
+      }
     } catch (err) {
       console.error("Profile load error:", err);
       setError("Failed to load profile");
     }
+
   };
 
   /* ================================
@@ -38,6 +45,17 @@ export default function MyProfile() {
       console.error("Skills load error:", err);
     }
   };
+
+  const loadReviews = async (userId) => {
+    try {
+      const res = await API.get(`/reviews/user/${userId}`);
+      setReviews(res.data.reviews || []);
+      setReviewStats(res.data.stats || { averageRating: 0, totalReviews: 0 });
+    } catch (err) {
+      console.error("Reviews load error:", err);
+    }
+  };
+
 
   const handleUpdate = async () => {
     setUpdating(true);
@@ -109,10 +127,11 @@ export default function MyProfile() {
                 <span className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Trades</span>
               </div>
               <div className="text-center">
-                <span className="block text-2xl font-bold text-gray-900">0.0</span>
+                <span className="block text-2xl font-bold text-gray-900">{reviewStats.averageRating?.toFixed(1) || "0.0"}</span>
                 <span className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Rating</span>
               </div>
             </div>
+
 
             {/* WANTED SKILLS UPDATE */}
             <div className="max-w-md mx-auto bg-gray-50 rounded-xl p-5 border border-gray-100">
@@ -173,7 +192,37 @@ export default function MyProfile() {
             </div>
           )}
         </div>
+
+        {/* ================= REVIEWS SECTION ================= */}
+        <div className="mt-16">
+          <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center">
+            Reviews ({reviewStats.totalReviews})
+          </h3>
+          {reviews.length > 0 ? (
+            <div className="grid gap-4 max-w-xl mx-auto text-left">
+              {reviews.map((rev) => (
+                <div key={rev._id} className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <span className="font-semibold text-gray-900">{rev.reviewer?.name || rev.reviewer?.email}</span>
+                      <div className="flex text-yellow-400 text-sm mt-0.5">
+                        {"★".repeat(rev.rating)}{"☆".repeat(5 - rev.rating)}
+                      </div>
+                    </div>
+                    <span className="text-xs text-gray-400">
+                      {new Date(rev.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="text-gray-600 text-sm italic">"{rev.comment || "No comment provided."}"</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-center">No reviews yet.</p>
+          )}
+        </div>
       </div>
     </div>
+
   );
 }

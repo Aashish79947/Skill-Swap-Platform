@@ -6,7 +6,12 @@ import API from "../services/api";
 export default function Requests() {
   const [requests, setRequests] = useState({ received: [], sent: [] });
   const [loading, setLoading] = useState(true);
+  const [showRateModal, setShowRateModal] = useState(false);
+  const [selectedTrade, setSelectedTrade] = useState(null);
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
   const navigate = useNavigate();
+
 
   const fetchRequests = async () => {
     try {
@@ -29,11 +34,40 @@ export default function Requests() {
     try {
       await API.put(`/trade/requests/${id}/${action}`);
       fetchRequests();
+      toast.success(`Request ${action}ed`);
     } catch (err) {
       console.error(err);
       toast.error(`Failed to ${action} request`);
     }
   };
+
+  const handleComplete = async (id) => {
+    try {
+      await API.put(`/trade/requests/${id}/complete`);
+      fetchRequests();
+      toast.success("Trade marked as completed");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to complete trade");
+    }
+  };
+
+  const handleRate = async () => {
+    try {
+      await API.post("/reviews", {
+        tradeId: selectedTrade._id,
+        rating,
+        comment,
+      });
+      toast.success("Review submitted!");
+      setShowRateModal(false);
+      setComment("");
+      setRating(5);
+    } catch (err) {
+      toast.error(err.message || "Failed to submit review");
+    }
+  };
+
 
   useEffect(() => {
     fetchRequests();
@@ -132,15 +166,34 @@ export default function Requests() {
                   )}
 
                   {req.status === "accepted" && (
+                    <div className="flex gap-2 mt-4">
+                      <button
+                        className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition"
+                        onClick={() => navigate(`/messages/${req._id}`)}
+                      >
+                        Message
+                      </button>
+                      <button
+                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition"
+                        onClick={() => handleComplete(req._id)}
+                      >
+                        Complete
+                      </button>
+                    </div>
+                  )}
+
+                  {req.status === "completed" && (
                     <button
-                      className="mt-4 bg-sky-500 hover:bg-sky-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition"
-                      onClick={() =>
-                        navigate(`/messages/${req._id}`)
-                      }
+                      className="mt-4 border border-sky-600 text-sky-600 hover:bg-sky-50 px-4 py-1.5 rounded-lg text-sm font-medium transition"
+                      onClick={() => {
+                        setSelectedTrade(req);
+                        setShowRateModal(true);
+                      }}
                     >
-                      Message
+                      Rate User
                     </button>
                   )}
+
                 </div>
               ))}
             </div>
@@ -192,21 +245,87 @@ export default function Requests() {
                   </div>
 
                   {req.status === "accepted" && (
+                    <div className="flex gap-2 mt-4">
+                      <button
+                        className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition"
+                        onClick={() => navigate(`/messages/${req._id}`)}
+                      >
+                        Message
+                      </button>
+                      <button
+                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition"
+                        onClick={() => handleComplete(req._id)}
+                      >
+                        Complete
+                      </button>
+                    </div>
+                  )}
+
+                  {req.status === "completed" && (
                     <button
-                      className="mt-4 bg-sky-500 hover:bg-sky-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition"
-                      onClick={() =>
-                        navigate(`/messages/${req._id}`)
-                      }
+                      className="mt-4 border border-sky-600 text-sky-600 hover:bg-sky-50 px-4 py-1.5 rounded-lg text-sm font-medium transition"
+                      onClick={() => {
+                        setSelectedTrade(req);
+                        setShowRateModal(true);
+                      }}
                     >
-                      Message
+                      Rate User
                     </button>
                   )}
+
                 </div>
               ))}
             </div>
           )}
         </section>
       </div>
+
+      {/* RATING MODAL */}
+      {showRateModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl scale-in-center">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">Rate your trade Experience</h3>
+            <p className="text-sm text-gray-500 mb-6">
+              How was your trade with {selectedTrade?.sender?.email === selectedTrade?.partner_email ? selectedTrade?.receiver?.email : (selectedTrade?.partner_email || "the partner")}?
+            </p>
+
+            <div className="flex gap-2 mb-6">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => setRating(star)}
+                  className={`text-2xl transition ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+
+            <textarea
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Leave a comment (optional)"
+              className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-sky-400 outline-none h-24 mb-6"
+            />
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleRate}
+                className="flex-1 bg-sky-500 hover:bg-sky-600 text-white font-medium py-2.5 rounded-xl transition"
+              >
+                Submit Rating
+              </button>
+              <button
+                onClick={() => setShowRateModal(false)}
+                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 rounded-xl transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+
   );
 }
