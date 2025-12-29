@@ -25,7 +25,7 @@ Contains instructions for setting up the UI, running the development server, and
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/skill-trading-platform.git
+   git clone https://github.com/Aashish79947/Skill-Swap-Platform.git
    cd "skill-trading-platform"
    ```
 
