@@ -64,5 +64,11 @@ export const getMatches = () => API.get("/matches");
 export const getNotifications = () => API.get("/notifications");
 export const markNotificationAsRead = (id) => API.put(`/notifications/${id}/read`);
 export const markAllNotificationsAsRead = () => API.put("/notifications/read-all");
+export const clearNotifications = () => API.delete("/notifications");
+
+/* ================= REVIEWS ================= */
+export const completeTradeRequest = (id) => API.put(`/trade/requests/${id}/complete`);
+export const createReview = (data) => API.post("/reviews", data);
+export const getUserReviews = (userId) => API.get(`/reviews/user/${userId}`);
 
 export default API;

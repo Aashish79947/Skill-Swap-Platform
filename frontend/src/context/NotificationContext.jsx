@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import { useAuth } from "./AuthContext";
-import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead } from "../services/api";
+import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead, clearNotifications } from "../services/api";
 import toast from "react-hot-toast";
 
 const NotificationContext = createContext(null);
@@ -75,6 +75,18 @@ export const NotificationProvider = ({ children }) => {
         }
     };
 
+    const clearAll = async () => {
+        try {
+            await clearNotifications();
+            setNotifications([]);
+            setUnreadCount(0);
+            toast.success("Notifications cleared");
+        } catch (err) {
+            console.error("Failed to clear notifications:", err);
+        }
+    };
+
+
     return (
         <NotificationContext.Provider
             value={{
@@ -82,7 +94,9 @@ export const NotificationProvider = ({ children }) => {
                 unreadCount,
                 markAsRead,
                 markAllRead,
+                clearAll,
                 fetchNotifications,
+
             }}
         >
             {children}

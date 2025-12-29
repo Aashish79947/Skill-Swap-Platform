@@ -41,14 +41,54 @@ export const getConversations = async (req, res) => {
             },
             { $unwind: "$partner" },
             {
+                $lookup: {
+                    from: "traderequests",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "trade_info",
+                },
+            },
+            { $unwind: "$trade_info" },
+            {
+                $lookup: {
+                    from: "skills",
+                    localField: "trade_info.skill",
+                    foreignField: "_id",
+                    as: "skill_info",
+                },
+            },
+            {
+                $lookup: {
+                    from: "skills",
+                    localField: "partner_id",
+                    foreignField: "user",
+                    as: "partner_skills",
+                },
+            },
+            {
+                $addFields: {
+                    trade_skill: { $arrayElemAt: ["$skill_info", 0] }
+                }
+            },
+            {
                 $project: {
                     conversation_key: "$_id",
                     latest_message: 1,
                     timestamp: 1,
                     partner_email: "$partner.email",
+                    skill_title: {
+                        $cond: {
+                            if: { $eq: ["$trade_skill.user", "$partner_id"] },
+                            then: "$trade_skill.title",
+                            else: { $ifNull: [{ $arrayElemAt: ["$partner_skills.title", 0] }, "$trade_skill.title"] }
+                        }
+                    },
                 },
             },
         ]);
+
+
+
 
         res.json({ conversations });
     } catch (err) {

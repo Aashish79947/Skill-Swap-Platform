@@ -57,10 +57,19 @@ export default function SkillCard({ skill, onDeleted, onEdit }) {
           {skill.title}
         </h3>
 
-        {/* Category Badge */}
-        <span className="mt-2 inline-flex w-fit items-center px-3 py-1 rounded-full text-xs font-medium bg-sky-100 text-sky-700">
-          {skill.category}
-        </span>
+        {/* Category Badge & Rating */}
+        <div className="flex justify-between items-center mt-2">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-sky-100 text-sky-700">
+            {skill.category}
+          </span>
+          {skill.user?.averageRating > 0 && (
+            <span className="flex items-center gap-1 text-xs font-semibold text-yellow-600">
+              ★ {skill.user.averageRating.toFixed(1)}
+              <span className="text-gray-400 font-normal">({skill.user.totalReviews})</span>
+            </span>
+          )}
+        </div>
+
 
         {/* Description */}
         <p className="mt-3 text-sm text-gray-600 leading-relaxed flex-grow">

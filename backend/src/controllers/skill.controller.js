@@ -47,7 +47,7 @@ export const getMySkills = async (req, res) => {
 export const getMarketplace = async (req, res) => {
     const skills = await Skill.find({
         user: { $ne: req.user.id },
-    }).populate("user", "name email");
+    }).populate("user", "name email averageRating totalReviews");
 
     res.json(skills);
 };
