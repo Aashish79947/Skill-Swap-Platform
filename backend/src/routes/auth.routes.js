@@ -9,11 +9,11 @@ import auth from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-// Public Routes
+
 router.post("/register", register);
 router.post("/login", login);
+router.get("/me",getProfile)
 
-// Protected Routes
 router.get("/profile", auth, getProfile);
 router.put("/profile", auth, updateProfile);
 
