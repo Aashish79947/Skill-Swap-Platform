@@ -60,6 +60,14 @@ export default function Search() {
     return matchCategory && matchQuery;
   });
 
+  const categoryIcons = {
+    Programming: "M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4",
+    Design: "M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z",
+    Marketing: "M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z",
+    Writing: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z",
+    Music: "M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3",
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-10">
       <div className="max-w-7xl mx-auto">
@@ -114,56 +122,80 @@ export default function Search() {
           </p>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredSkills.map((skill) => (
-              <div
-                key={skill._id}
-                className="bg-white rounded-2xl border border-gray-200
-                           shadow-sm hover:shadow-md transition p-6 flex flex-col"
-              >
-                {/* TITLE */}
-                <h2 className="text-lg font-semibold text-gray-900">
-                  {skill.title}
-                </h2>
-
-                {/* CATEGORY BADGE */}
-                <span className="inline-block mt-2 w-fit text-xs font-medium
-                                 px-3 py-1 rounded-full
-                                 bg-sky-100 text-sky-700">
-                  {skill.category || "Uncategorized"}
-                </span>
-
-                {/* DESCRIPTION */}
-                <p className="text-sm text-gray-600 mt-3 flex-grow">
-                  {skill.description || "No description provided."}
-                </p>
-
-                {/* USER */}
-                <p className="text-xs text-gray-400 mt-4">
-                  Posted by {skill.user?.email || "Unknown"}
-                </p>
-
-                {/* ACTION */}
-                <button
-                  onClick={() => handleSendRequest(skill._id)}
-                  disabled={
-                    sendingId === skill._id ||
-                    requestedIds.has(skill._id)
-                  }
-                  className={`mt-4 py-2 rounded-lg font-medium transition ${requestedIds.has(skill._id)
-                    ? "bg-gray-200 text-gray-600 cursor-not-allowed"
-                    : sendingId === skill._id
-                      ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                      : "bg-green-500 hover:bg-green-600 text-white"
-                    }`}
+            {filteredSkills.map((skill) => {
+              const currentIcon = categoryIcons[skill.category] || "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z";
+              return (
+                <div
+                  key={skill._id}
+                  className="glass-card rounded-[2rem] p-8 flex flex-col justify-between h-full group relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-sky-500/10 hover:-translate-y-2 border-white/60 bg-white"
                 >
-                  {requestedIds.has(skill._id)
-                    ? "Request Sent"
-                    : sendingId === skill._id
-                      ? "Sending…"
-                      : "Send Trade Request"}
-                </button>
-              </div>
-            ))}
+                  {/* Decorative gradient blob */}
+                  <div className="absolute -top-12 -right-12 w-32 h-32 bg-gradient-to-br from-sky-400/20 to-blue-600/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
+
+                  <div className="relative">
+                    {/* Header: Icon + Category */}
+                    <div className="flex justify-between items-start mb-6">
+                      <div className="w-12 h-12 rounded-2xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-sky-500 group-hover:scale-110 transition-transform duration-500">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d={currentIcon}></path>
+                        </svg>
+                      </div>
+                      <span className="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-sky-50 text-sky-600 border border-sky-100/50">
+                        {skill.category || "Uncategorized"}
+                      </span>
+                    </div>
+
+                    {/* Content */}
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 tracking-tight group-hover:text-sky-600 transition-colors">
+                        {skill.title}
+                      </h3>
+
+                      {/* USER */}
+                      <p className="text-xs text-gray-400 mt-2 font-semibold">
+                        Posted by {skill.user?.email || "Unknown"}
+                      </p>
+
+                      <p className="mt-4 text-gray-500 text-sm leading-relaxed line-clamp-3">
+                        {skill.description || "A wonderful skill waitng to be shared."}
+                      </p>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="mt-8 flex items-center justify-between border-t border-gray-50 pt-5">
+                      <div className="flex items-center -space-x-2">
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] font-bold text-gray-400 uppercase">
+                            {String.fromCharCode(64 + i)}
+                          </div>
+                        ))}
+                        <span className="pl-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest hidden sm:inline-block">Experts</span>
+                      </div>
+
+                      <button
+                        onClick={() => handleSendRequest(skill._id)}
+                        disabled={
+                          sendingId === skill._id ||
+                          requestedIds.has(skill._id)
+                        }
+                        className={`px-4 py-2 rounded-xl text-sm font-bold transition-all shadow-sm ${requestedIds.has(skill._id)
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed shadow-none"
+                          : sendingId === skill._id
+                            ? "bg-sky-50 text-sky-300 cursor-not-allowed shadow-none"
+                            : "bg-sky-500 hover:bg-sky-400 text-white hover:shadow-sky-500/25 hover:-translate-y-0.5"
+                          }`}
+                      >
+                        {requestedIds.has(skill._id)
+                          ? "Sent"
+                          : sendingId === skill._id
+                            ? "Sending…"
+                            : "Trade Request"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
