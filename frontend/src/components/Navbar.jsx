@@ -23,7 +23,7 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 w-full py-3 px-4 sm:px-6">
-      <div className="max-w-7xl mx-auto glass rounded-2xl shadow-lg border border-white/40 overflow-hidden">
+      <div className="max-w-7xl mx-auto glass rounded-2xl shadow-lg border border-white/40">
         <div className="px-6 h-16 flex items-center justify-between gap-4">
 
           {/* Left: Brand + Links */}
