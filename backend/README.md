@@ -94,10 +94,3 @@ backend/
 ```bash
 npm run dev
 ```
-
-### Production Mode
-```bash
-npm start
-```
-
-The server will be running at `http://localhost:8000` by default.
