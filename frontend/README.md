@@ -80,18 +80,3 @@ frontend/
 ```bash
 npm run dev
 ```
-
-### Build for Production
-```bash
-npm run build
-```
-
-### Preview Production Build
-```bash
-npm run preview
-```
-
-### Lint Code
-```bash
-npm run lint
-```
