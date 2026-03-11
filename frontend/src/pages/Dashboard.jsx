@@ -105,6 +105,7 @@ export default function Dashboard() {
               <option value="Design">Design</option>
               <option value="Marketing">Marketing</option>
               <option value="Writing">Writing</option>
+              <option value="Music">Music</option>
             </select>
 
             <textarea

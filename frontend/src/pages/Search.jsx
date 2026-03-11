@@ -99,6 +99,7 @@ export default function Search() {
             <option value="Marketing">Marketing</option>
             <option value="Writing">Writing</option>
             <option value="Business">Business</option>
+            <option value="Music">Music</option>
           </select>
         </div>
 
