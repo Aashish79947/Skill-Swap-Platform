@@ -84,13 +84,23 @@ export default function Requests() {
   /* ---------- STATUS BADGE ---------- */
   const statusBadge = (status) => {
     if (status === "pending")
-      return "bg-yellow-100 text-yellow-700";
+      return "bg-yellow-100 text-yellow-700 border-yellow-200";
     if (status === "accepted")
-      return "bg-green-100 text-green-700";
+      return "bg-green-100 text-green-700 border-green-200";
     if (status === "rejected")
-      return "bg-red-100 text-red-700";
-    return "bg-gray-100 text-gray-600";
+      return "bg-red-100 text-red-700 border-red-200";
+    return "bg-gray-100 text-gray-600 border-gray-200";
   };
+
+  const categoryIcons = {
+    Programming: "M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4",
+    Design: "M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z",
+    Marketing: "M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z",
+    Writing: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z",
+    Music: "M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3",
+  };
+
+  const getIcon = (category) => categoryIcons[category] || "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z";
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-8 min-h-screen">
@@ -115,11 +125,35 @@ export default function Requests() {
               {requests.received.map((req) => (
                 <div
                   key={req._id}
-                  className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition"
+                  className="glass-card rounded-[2rem] p-8 flex flex-col justify-between h-full group relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-sky-500/10 hover:-translate-y-2 border-white/60"
                 >
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <p className="text-sm text-gray-600">
+                  {/* Decorative gradient blob */}
+                  <div className="absolute -top-12 -right-12 w-32 h-32 bg-gradient-to-br from-sky-400/20 to-blue-600/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
+
+                  <div className="relative">
+                    {/* Header: Icon + Status */}
+                    <div className="flex justify-between items-start mb-6">
+                      <div className="w-12 h-12 rounded-2xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-sky-500 group-hover:scale-110 transition-transform duration-500">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d={getIcon(req.skill?.category)}></path>
+                        </svg>
+                      </div>
+                      <span
+                        className={`text-xs font-bold px-4 py-1.5 rounded-full capitalize border ${statusBadge(
+                          req.status
+                        )}`}
+                      >
+                        {req.status}
+                      </span>
+                    </div>
+
+                    {/* Content */}
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 tracking-tight group-hover:text-sky-600 transition-colors line-clamp-2">
+                        {req.skill?.title || "N/A"}
+                      </h3>
+
+                      <p className="mt-2 text-gray-500 text-sm leading-relaxed">
                         From{" "}
                         <Link
                           to={`/profile/${req.sender?._id}`}
@@ -128,72 +162,66 @@ export default function Requests() {
                           {req.sender?.email}
                         </Link>
                       </p>
-
-                      <p className="text-sm text-gray-700">
-                        <span className="font-medium">Skill:</span>{" "}
-                        {req.skill?.title || "N/A"}
-                      </p>
                     </div>
 
-                    <span
-                      className={`text-xs font-medium px-3 py-1 rounded-full capitalize ${statusBadge(
-                        req.status
-                      )}`}
-                    >
-                      {req.status}
-                    </span>
+                    {/* Footer / Actions */}
+                    <div className="mt-8 flex items-center justify-between border-t border-gray-50 pt-5">
+                      <div className="flex items-center -space-x-2">
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] font-bold text-gray-400 uppercase">
+                            {String.fromCharCode(64 + i)}
+                          </div>
+                        ))}
+                        <span className="pl-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest hidden sm:inline-block">Experts</span>
+                      </div>
+
+                      <div className="flex gap-2">
+                        {req.status === "pending" && (
+                          <>
+                            <button
+                              onClick={() => handleAction(req._id, "accept")}
+                              className="px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded-xl text-xs font-medium transition-all shadow-sm"
+                            >
+                              Accept
+                            </button>
+                            <button
+                              onClick={() => handleAction(req._id, "reject")}
+                              className="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-medium transition-all shadow-sm"
+                            >
+                              Reject
+                            </button>
+                          </>
+                        )}
+                        {req.status === "accepted" && (
+                          <>
+                            <button
+                              className="px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-xs font-medium transition-all shadow-sm"
+                              onClick={() => navigate(`/messages/${req._id}`)}
+                            >
+                              Message
+                            </button>
+                            <button
+                              className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-medium transition-all shadow-sm"
+                              onClick={() => handleComplete(req._id)}
+                            >
+                              Complete
+                            </button>
+                          </>
+                        )}
+                        {req.status === "completed" && (
+                          <button
+                            className="px-3 py-1.5 border border-sky-600 text-sky-600 hover:bg-sky-50 rounded-xl text-xs font-medium transition-all"
+                            onClick={() => {
+                              setSelectedTrade(req);
+                              setShowRateModal(true);
+                            }}
+                          >
+                            Rate User
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
-
-                  {req.status === "pending" && (
-                    <div className="flex gap-2 mt-4">
-                      <button
-                        onClick={() =>
-                          handleAction(req._id, "accept")
-                        }
-                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition"
-                      >
-                        Accept
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleAction(req._id, "reject")
-                        }
-                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition"
-                      >
-                        Reject
-                      </button>
-                    </div>
-                  )}
-
-                  {req.status === "accepted" && (
-                    <div className="flex gap-2 mt-4">
-                      <button
-                        className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition"
-                        onClick={() => navigate(`/messages/${req._id}`)}
-                      >
-                        Message
-                      </button>
-                      <button
-                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition"
-                        onClick={() => handleComplete(req._id)}
-                      >
-                        Complete
-                      </button>
-                    </div>
-                  )}
-
-                  {req.status === "completed" && (
-                    <button
-                      className="mt-4 border border-sky-600 text-sky-600 hover:bg-sky-50 px-4 py-1.5 rounded-lg text-sm font-medium transition"
-                      onClick={() => {
-                        setSelectedTrade(req);
-                        setShowRateModal(true);
-                      }}
-                    >
-                      Rate User
-                    </button>
-                  )}
-
                 </div>
               ))}
             </div>
@@ -215,11 +243,35 @@ export default function Requests() {
               {requests.sent.map((req) => (
                 <div
                   key={req._id}
-                  className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition"
+                  className="glass-card rounded-[2rem] p-8 flex flex-col justify-between h-full group relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-sky-500/10 hover:-translate-y-2 border-white/60"
                 >
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <p className="text-sm text-gray-600">
+                  {/* Decorative gradient blob */}
+                  <div className="absolute -top-12 -right-12 w-32 h-32 bg-gradient-to-br from-sky-400/20 to-blue-600/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
+
+                  <div className="relative">
+                    {/* Header: Icon + Status */}
+                    <div className="flex justify-between items-start mb-6">
+                      <div className="w-12 h-12 rounded-2xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-sky-500 group-hover:scale-110 transition-transform duration-500">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d={getIcon(req.skill?.category)}></path>
+                        </svg>
+                      </div>
+                      <span
+                        className={`text-xs font-bold px-4 py-1.5 rounded-full capitalize border ${statusBadge(
+                          req.status
+                        )}`}
+                      >
+                        {req.status}
+                      </span>
+                    </div>
+
+                    {/* Content */}
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 tracking-tight group-hover:text-sky-600 transition-colors line-clamp-2">
+                        {req.skill?.title || "N/A"}
+                      </h3>
+
+                      <p className="mt-2 text-gray-500 text-sm leading-relaxed">
                         To{" "}
                         <Link
                           to={`/profile/${req.receiver?._id}`}
@@ -228,51 +280,50 @@ export default function Requests() {
                           {req.receiver?.email}
                         </Link>
                       </p>
-
-                      <p className="text-sm text-gray-700">
-                        <span className="font-medium">Skill:</span>{" "}
-                        {req.skill?.title || "N/A"}
-                      </p>
                     </div>
 
-                    <span
-                      className={`text-xs font-medium px-3 py-1 rounded-full capitalize ${statusBadge(
-                        req.status
-                      )}`}
-                    >
-                      {req.status}
-                    </span>
+                    {/* Footer / Actions */}
+                    <div className="mt-8 flex items-center justify-between border-t border-gray-50 pt-5">
+                      <div className="flex items-center -space-x-2">
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] font-bold text-gray-400 uppercase">
+                            {String.fromCharCode(64 + i)}
+                          </div>
+                        ))}
+                        <span className="pl-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest hidden sm:inline-block">Experts</span>
+                      </div>
+
+                      <div className="flex gap-2">
+                        {req.status === "accepted" && (
+                          <>
+                            <button
+                              className="px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-xs font-medium transition-all shadow-sm"
+                              onClick={() => navigate(`/messages/${req._id}`)}
+                            >
+                              Message
+                            </button>
+                            <button
+                              className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-medium transition-all shadow-sm"
+                              onClick={() => handleComplete(req._id)}
+                            >
+                              Complete
+                            </button>
+                          </>
+                        )}
+                        {req.status === "completed" && (
+                          <button
+                            className="px-3 py-1.5 border border-sky-600 text-sky-600 hover:bg-sky-50 rounded-xl text-xs font-medium transition-all"
+                            onClick={() => {
+                              setSelectedTrade(req);
+                              setShowRateModal(true);
+                            }}
+                          >
+                            Rate User
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
-
-                  {req.status === "accepted" && (
-                    <div className="flex gap-2 mt-4">
-                      <button
-                        className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition"
-                        onClick={() => navigate(`/messages/${req._id}`)}
-                      >
-                        Message
-                      </button>
-                      <button
-                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition"
-                        onClick={() => handleComplete(req._id)}
-                      >
-                        Complete
-                      </button>
-                    </div>
-                  )}
-
-                  {req.status === "completed" && (
-                    <button
-                      className="mt-4 border border-sky-600 text-sky-600 hover:bg-sky-50 px-4 py-1.5 rounded-lg text-sm font-medium transition"
-                      onClick={() => {
-                        setSelectedTrade(req);
-                        setShowRateModal(true);
-                      }}
-                    >
-                      Rate User
-                    </button>
-                  )}
-
                 </div>
               ))}
             </div>
