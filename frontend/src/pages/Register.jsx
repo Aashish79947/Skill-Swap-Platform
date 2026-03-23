@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { registerUser } from "../services/api";
 import { useNavigate, Link } from "react-router-dom";
+import GoogleSignInButton from "../components/GoogleSignInButton.jsx";
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -136,6 +137,21 @@ export default function Register() {
               {loading ? "Creating account..." : "Register"}
             </button>
           </form>
+
+          {/* Divider */}
+          <div className="mt-6 mb-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">Or sign up with</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Google Sign-In Button */}
+          <GoogleSignInButton />
 
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-600">

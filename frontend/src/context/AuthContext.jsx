@@ -35,9 +35,14 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, [token]);
 
-    const login = (newToken) => {
+    const login = (newToken, userData = null) => {
         localStorage.setItem("token", newToken);
         setToken(newToken);
+        
+        // If userData is provided (Google auth), set it directly
+        if (userData) {
+            setUser(userData);
+        }
     };
 
     const logout = () => {
