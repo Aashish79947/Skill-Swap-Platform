@@ -1,0 +1,37 @@
+name: Continuous Integration
+
+# This tells GitHub to run the action whenever you push code or open a PR
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest # Runs in a fresh Linux cloud environment
+
+    steps:
+      # Step 1: Downloads your repository code
+      - name: Checkout Repository
+        uses: actions/checkout@v4 
+
+      # Step 2: Installs the Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # You can change this to match your local version
+
+      # Step 3: Test the Backend
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: npm install
+
+      # Step 4: Test the Frontend
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Build Frontend
+        working-directory: ./frontend
+        run: npm run build
