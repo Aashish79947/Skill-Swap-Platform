@@ -18,7 +18,7 @@ export default function Login() {
       const res = await loginUser(form);
       // Handle enhanced login response with user data
       login(res.data.token, res.data.user);
-      toast.success("Welcome back!");
+      toast.success("Sign in here.");
       navigate("/dashboard");
     } catch (err) {
       toast.error(err?.response?.data?.message || err?.response?.data?.msg || "Login failed");
@@ -65,7 +65,7 @@ export default function Login() {
       <div className="lg:w-1/2 flex items-center justify-center p-8 lg:p-12 bg-white">
         <div className="max-w-md w-full">
           <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent text-center mb-6">
-            Welcome Back
+            Sign in here
           </h2>
           <p className="text-center text-gray-500 mb-8">
             Please enter your details to sign in.
