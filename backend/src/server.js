@@ -13,9 +13,12 @@ import matchRoutes from "./routes/match.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import reviewRoutes from "./routes/review.routes.js";
 
-
 dotenv.config();
 connectDB();
+
+// Configure passport after dotenv config
+import passport, { configurePassport } from "./config/passport.js";
+configurePassport();
 
 const app = express();
 
@@ -24,6 +27,7 @@ const app = express();
 ========================= */
 app.use(cors());
 app.use(express.json());
+app.use(passport.initialize());
 
 /* =========================
    CREATE HTTP SERVER

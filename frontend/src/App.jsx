@@ -15,6 +15,8 @@ import Search from "./pages/Search.jsx";
 import MyProfile from "./pages/MyProfile.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
 import Matches from "./pages/Matches.jsx";
+import AuthSuccess from "./pages/AuthSuccess.jsx";
+import AuthError from "./pages/AuthError.jsx";
 
 import MessagesList from "./pages/MessagesList.jsx";
 import ChatWindow from "./pages/ChatWindow.jsx";
@@ -23,7 +25,7 @@ import { useLocation } from "react-router-dom";
 
 function Layout({ children }) {
   const location = useLocation();
-  const hideNavbarRoutes = ["/login", "/register"];
+  const hideNavbarRoutes = ["/login", "/register", "/auth/success", "/auth/error"];
   const showNavbar = !hideNavbarRoutes.includes(location.pathname);
 
   return (
@@ -46,6 +48,8 @@ function App() {
               {/* PUBLIC ROUTES */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/auth/success" element={<AuthSuccess />} />
+              <Route path="/auth/error" element={<AuthError />} />
 
               {/* PROTECTED ROUTES */}
               <Route

@@ -9,13 +9,37 @@ import jwt from "jsonwebtoken";
  * @access Public
  */
 export const register = async (req, res) => {
-  const { name, email, password } = req.body;
+  try {
+    const { name, email, password } = req.body;
 
-  const hashed = await bcrypt.hash(password, 10);
-  await User.create({ name, email, password: hashed });
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
 
-  // Return success message only (never return the full user object with hash)
-  res.status(201).json({ message: "User registered successfully" });
+    const hashed = await bcrypt.hash(password, 10);
+    const user = await User.create({ 
+      name, 
+      email, 
+      password: hashed,
+      authMethod: 'local'
+    });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    res.status(201).json({ 
+      message: "User registered successfully",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        authMethod: user.authMethod
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Registration failed", error: error.message });
+  }
 };
 
 /**
@@ -25,16 +49,36 @@ export const register = async (req, res) => {
  * @access Public
  */
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
-  if (!user) return res.status(400).json({ msg: "User not found" });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ msg: "User not found" });
 
-  const match = await bcrypt.compare(password, user.password);
-  if (!match) return res.status(400).json({ msg: "Wrong password" });
+    // Check if user registered with Google
+    if (user.authMethod === 'google') {
+      return res.status(400).json({ 
+        msg: "Please use Google Sign-In for this account" 
+      });
+    }
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-  res.json({ token });
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(400).json({ msg: "Wrong password" });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    res.json({ 
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        authMethod: user.authMethod,
+        avatar: user.avatar
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Login failed", error: error.message });
+  }
 };
 
 /**
@@ -78,5 +122,32 @@ export const updateProfile = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to update profile" });
+  }
+};
+
+/**
+ * @function googleAuth
+ * @description Initiates Google OAuth flow
+ * @route GET /api/auth/google
+ * @access Public
+ */
+export const googleAuth = (req, res, next) => {
+  // This will be handled by passport middleware
+};
+
+/**
+ * @function googleCallback
+ * @description Handles Google OAuth callback and issues JWT
+ * @route GET /api/auth/google/callback
+ * @access Public
+ */
+export const googleCallback = async (req, res) => {
+  try {
+    const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET);
+    
+    // Redirect to frontend with token
+    res.redirect(`${process.env.CLIENT_URL}/auth/success?token=${token}`);
+  } catch (error) {
+    res.redirect(`${process.env.CLIENT_URL}/auth/error`);
   }
 };

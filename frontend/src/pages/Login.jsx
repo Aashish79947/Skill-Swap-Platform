@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { loginUser } from "../services/api";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import GoogleSignInButton from "../components/GoogleSignInButton.jsx";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -15,11 +16,12 @@ export default function Login() {
     setLoading(true);
     try {
       const res = await loginUser(form);
-      login(res.data.token);
+      // Handle enhanced login response with user data
+      login(res.data.token, res.data.user);
       toast.success("Welcome back!");
       navigate("/dashboard");
     } catch (err) {
-      toast.error(err?.response?.data?.detail || "Login failed");
+      toast.error(err?.response?.data?.message || err?.response?.data?.msg || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -123,6 +125,21 @@ export default function Login() {
               {loading ? "Signing in..." : "Sign in"}
             </button>
           </form>
+
+          {/* Divider */}
+          <div className="mt-6 mb-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Google Sign-In Button */}
+          <GoogleSignInButton />
 
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-600">
