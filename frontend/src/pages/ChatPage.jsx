@@ -52,7 +52,7 @@ const ChatPage = ({ currentUser }) => {
     const loadChat = async () => {
       try {
         const res = await API.get(`/chat/${requestId}`);
-        const data = Array.isArray(res.data) ? res.data : [];
+        const data = Array.isArray(res.data) ? res.data : (res.data.messages || []);
         setMessages(data);
 
         const firstMsg = data.find(
@@ -106,10 +106,9 @@ const ChatPage = ({ currentUser }) => {
             >
               <div
                 className={`max-w-xs md:max-w-sm px-4 py-2 rounded-2xl text-sm shadow
-                  ${
-                    isMine
-                      ? "bg-sky-500 text-white rounded-br-md"
-                      : "bg-white text-gray-800 rounded-bl-md border"
+                  ${isMine
+                    ? "bg-sky-500 text-white rounded-br-md"
+                    : "bg-white text-gray-800 rounded-bl-md border"
                   }`}
               >
                 <p>{m.message}</p>

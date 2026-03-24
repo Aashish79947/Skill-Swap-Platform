@@ -19,6 +19,7 @@ function formatTime(time) {
 export default function ChatWindow() {
   const { tradeId } = useParams();
   const [messages, setMessages] = useState([]);
+  const [partner, setPartner] = useState(null);
   const [text, setText] = useState("");
   const [currentUserId, setCurrentUserId] = useState(null);
   const bottomRef = useRef(null);
@@ -35,7 +36,10 @@ export default function ChatWindow() {
   useEffect(() => {
     if (!tradeId) return;
     API.get(`/chat/${tradeId}`)
-      .then((res) => setMessages(res.data || []))
+      .then((res) => {
+        setMessages(res.data.messages || []);
+        setPartner(res.data.partner || null);
+      })
       .catch(console.error);
   }, [tradeId]);
 
@@ -74,17 +78,33 @@ export default function ChatWindow() {
   };
 
   return (
-    <div className="h-screen w-full bg-gray-50 flex items-center justify-center p-4 overflow-hidden">
-      <div className="flex flex-col w-full max-w-3xl bg-white border border-gray-200 shadow-md rounded-2xl h-full max-h-[90vh] flex-shrink-0">
+    <div className="h-[calc(100vh-88px)] w-full bg-gray-50 flex items-center justify-center p-4 overflow-hidden">
+      <div className="flex flex-col w-full max-w-3xl bg-white border border-gray-200 shadow-md rounded-2xl h-full relative overflow-hidden">
 
         {/* HEADER */}
-        <header className="bg-white border-b border-gray-100 px-6 py-4 flex-shrink-0 rounded-t-2xl">
-          <h2 className="font-semibold text-gray-900">Trade Chat</h2>
-          <p className="text-xs text-gray-500">Trade #{tradeId}</p>
-        </header>
+        {partner && (
+          <header className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 bg-white flex-shrink-0 z-10">
+            {partner.avatar ? (
+              <img
+                src={partner.avatar.startsWith('http') ? partner.avatar : `http://localhost:8000${partner.avatar}`}
+                alt="avatar"
+                className="w-11 h-11 rounded-full object-cover"
+              />
+            ) : (
+              <div className="flex-shrink-0 w-11 h-11 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-semibold uppercase text-lg">
+                {(partner.name || partner.email)?.charAt(0)}
+              </div>
+            )}
+            <div className="flex flex-col">
+              <span className="font-semibold text-gray-800 text-lg">
+                {partner.name || partner.email}
+              </span>
+            </div>
+          </header>
+        )}
 
         {/* CHAT */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-white relative no-scrollbar [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {messages.length === 0 && (
             <div className="flex flex-col items-center justify-center h-full text-gray-400 space-y-3 opacity-80">
               <p className="text-sm font-medium">No messages yet</p>
@@ -120,7 +140,7 @@ export default function ChatWindow() {
         </div>
 
         {/* INPUT */}
-        <footer className="bg-white border-t border-gray-100 px-4 py-3 flex gap-2 flex-shrink-0 rounded-b-2xl">
+        <footer className="bg-white border-t border-gray-100 px-4 py-3 flex gap-2 flex-shrink-0 rounded-b-2xl sticky bottom-0">
           <input
             value={text}
             onChange={(e) => setText(e.target.value)}
