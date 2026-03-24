@@ -74,60 +74,69 @@ export default function ChatWindow() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 max-w-3xl mx-auto">
+    <div className="h-screen w-full bg-gray-50 flex items-center justify-center p-4 overflow-hidden">
+      <div className="flex flex-col w-full max-w-3xl bg-white border border-gray-200 shadow-md rounded-2xl h-full max-h-[90vh] flex-shrink-0">
 
-      {/* HEADER */}
-      <header className="bg-white border-b px-6 py-4 shadow-sm">
-        <h2 className="font-semibold text-gray-900">Trade Chat</h2>
-        <p className="text-xs text-gray-500">Trade #{tradeId}</p>
-      </header>
+        {/* HEADER */}
+        <header className="bg-white border-b border-gray-100 px-6 py-4 flex-shrink-0 rounded-t-2xl">
+          <h2 className="font-semibold text-gray-900">Trade Chat</h2>
+          <p className="text-xs text-gray-500">Trade #{tradeId}</p>
+        </header>
 
-      {/* CHAT */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 no-scrollbar">
-        {messages.map((m) => {
-          const senderId =
-            typeof m.sender === "object" ? m.sender._id : m.sender;
-          const isMine = senderId === currentUserId;
-
-          return (
-            <div
-              key={m._id}
-              className={`flex ${isMine ? "justify-end" : "justify-start"}`}
-            >
-              <div
-                className={`max-w-xs px-4 py-2 rounded-2xl shadow text-sm
-                  ${isMine
-                    ? "bg-sky-500 text-white rounded-br-md"
-                    : "bg-white text-gray-800 border rounded-bl-md"
-                  }`}
-              >
-                <p>{m.text}</p>
-                <p className="text-[10px] mt-1 text-right opacity-70">
-                  {formatTime(m.createdAt)}
-                </p>
-              </div>
+        {/* CHAT */}
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+          {messages.length === 0 && (
+            <div className="flex flex-col items-center justify-center h-full text-gray-400 space-y-3 opacity-80">
+              <p className="text-sm font-medium">No messages yet</p>
+              <p className="text-xs">Start the conversation!</p>
             </div>
-          );
-        })}
-        <div ref={bottomRef} />
-      </div>
+          )}
+          {messages.map((m) => {
+            const senderId =
+              typeof m.sender === "object" ? m.sender._id : m.sender;
+            const isMine = senderId === currentUserId;
 
-      {/* INPUT */}
-      <footer className="bg-white border-t px-4 py-3 flex gap-2">
-        <input
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          className="flex-1 border rounded-full px-4 py-2 focus:ring-2 focus:ring-sky-400"
-          placeholder="Type a message…"
-        />
-        <button
-          onClick={sendMessage}
-          className="bg-sky-500 hover:bg-sky-600 text-white px-5 py-2 rounded-full font-medium"
-        >
-          Send
-        </button>
-      </footer>
+            return (
+              <div
+                key={m._id}
+                className={`flex ${isMine ? "justify-end" : "justify-start"}`}
+              >
+                <div
+                  className={`max-w-xs px-4 py-2 rounded-2xl shadow-sm text-sm
+                    ${isMine
+                      ? "bg-sky-500 text-white rounded-br-md"
+                      : "bg-white text-gray-800 border border-gray-100 rounded-bl-md"
+                    }`}
+                >
+                  <p className="whitespace-pre-wrap break-words">{m.text}</p>
+                  <p className="text-[10px] mt-1 text-right opacity-70">
+                    {formatTime(m.createdAt)}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+          <div ref={bottomRef} className="h-2" />
+        </div>
+
+        {/* INPUT */}
+        <footer className="bg-white border-t border-gray-100 px-4 py-3 flex gap-2 flex-shrink-0 rounded-b-2xl">
+          <input
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+            className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:ring-2 focus:ring-sky-400 focus:outline-none"
+            placeholder="Type a message…"
+          />
+          <button
+            onClick={sendMessage}
+            disabled={!text.trim()}
+            className="bg-sky-500 hover:bg-sky-600 text-white px-5 py-2 rounded-full font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Send
+          </button>
+        </footer>
+      </div>
     </div>
   );
 }
