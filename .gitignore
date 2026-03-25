@@ -17,6 +17,14 @@ Thumbs.db
 *.swp
 *.swo
 
+# Python virtual environment
+.venv/
+__pycache__/
+*.pyc
+
+# Robot Framework test results
+tests/results/
+
 # Logs
 npm-debug.log*
 yarn-debug.log*
