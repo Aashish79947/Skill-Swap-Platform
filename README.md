@@ -1,5 +1,11 @@
 # Skill-Swap-Platform
 
+## 👥 Group Details (Group 17)
+
+- **Aashish S** (Roll No: 2)
+- **Shamlal** (Roll No: 46)
+- **Shifa Sulthana** (Roll No: 63)
+
 A full-stack skill trading platform where users can list skills, find matches, send trade requests, and chat in real-time. Built with **React + Vite** (frontend) and **Express + MongoDB** (backend), with automated testing powered by **Robot Framework**.
 
 ## Table of Contents
